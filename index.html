@@ -1,0 +1,1630 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<!-- flow-rebuild template (Growth Audit, v3: + walkthrough video, phone view/QR, localization, paywall today vs proposed). Replace every double-brace placeholder, everything between
+     the SCREENS markers, and the CONTENT json. Rules that brand-check.py enforces are marked RULE.
+     Reference builds: eddieatadapty.github.io/datacamp-flow-rebuild-v2 · bterzic123.github.io/planner5d-flow-rebuild-v2 -->
+<title>DOWN Growth Audit</title>
+<meta name="description" content="Five ideas to turn more DOWN users into subscribers, each built into a clickable version of DOWN's own onboarding. Prepared by Adapty.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- the APP's font (brand.json fonts, or the closest Google family) + a mono if the app shows code -->
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+/* BRAND:START — the only place the APP's colours are written as literals. RULE: every value here is
+   copied from brand.json / a sampled pixel of the app's own screens; never "improved". Used only inside the phone. */
+:root{
+  --b-primary:#ff0099;      /* CTA pink: downapp.com --clr-primary, #fa0798 in their app mockups */
+  --b-primary-ink:#ffffff;
+  --b-bg:#0f1839;           /* in-app navy (quiz + feed mockups) */
+  --b-deep:#0a1436;         /* paywall bottom / welcome ground */
+  --b-surface:#2b2f54;      /* plan cards, preference rows */
+  --b-tile:#222c4d;         /* unselected quiz tiles */
+  --b-sel:#f8f3fb;          /* selected tile (white) */
+  --b-ink:#ffffff;
+  --b-ink2:#898e9e;         /* secondary text */
+  --b-line:#484e68;
+  --b-accent2:#208cff;      /* the Date heart's blue */
+  --b-purple:#4f0667;       /* the Nearby pill's start */
+  --b-hl1:#f3e1a2;          /* "My highlight" card gradient */
+  --b-hl2:#df5d9f;
+  --b-grad:radial-gradient(60% 46% at 28% 20%,#8d40a6 0%,transparent 100%),radial-gradient(62% 50% at 62% 30%,#b14073 0%,transparent 100%),linear-gradient(180deg,#271749 0%,#0f1839 92%);
+  --b-radius:14px;
+  --b-pill:14px;
+  --b-font:'Geist',-apple-system,system-ui,sans-serif;
+  --b-mono:ui-monospace,monospace;
+}
+/* BRAND:END */
+/* A second app family (e.g. a mono for code) is applied HERE, never in SCREENS css (brand-check allows only
+   var(--b-font) there). Prefix with .scr so it beats the screens' font shorthands, e.g.:
+   .scr .code,.scr .instr code{font-family:var(--b-mono)} */
+
+/* ?app: keep the paywall headline clear of the close button */
+html.appmode .scr .s-pad.pw-pad{padding-top:max(96px,calc(env(safe-area-inset-top,0px) + 54px))}
+
+/* ================= the audit page — Adapty's, not the app's. Light, Apple-style. ================= */
+:root{
+  color-scheme:light;
+  --st-ground:#f5f5f7; --st-card:#ffffff; --st-ink:#1d1d1f; --st-ink2:#6e6e73; --st-ink3:#86868b;
+  --st-hair:rgba(0,0,0,.09); --st-link:#0066cc;
+  --st-accent:#040f32;      /* dark brand colour of the APP: buttons, the outcome band */
+  --st-hi:#ff0099;          /* bright brand colour of the APP: outcome numbers on the band, idea dots */
+  --st-mark:rgba(255,0,153,.32); /* --st-hi at ~.5 alpha: the highlighter under impact numbers */
+  --st-font:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text",system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:64px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
+html,body{margin:0}
+body{background:var(--st-ground);color:var(--st-ink);font-family:var(--st-font);-webkit-font-smoothing:antialiased;font-size:17px;line-height:1.47}
+.au-wrap{max-width:1080px;margin:0 auto;padding-inline:22px}
+a{color:var(--st-link)}
+button{font-family:inherit}
+:focus-visible{outline:2px solid var(--st-link);outline-offset:3px;border-radius:6px}
+mark{background:linear-gradient(transparent 62%,var(--st-mark) 62%,var(--st-mark) 92%,transparent 92%);color:inherit;padding:0 .04em}
+
+/* nav */
+.au-nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:40;background:rgba(245,245,247,.8);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid var(--st-hair)}
+.au-nav-in{max-width:1080px;margin:0 auto;padding-inline:22px;height:52px;display:flex;align-items:center;gap:26px}
+.au-brand{display:flex;align-items:center;gap:10px;margin-right:auto;min-width:0}
+.au-brand img{width:26px;height:26px;border-radius:7px;flex:none}
+.au-brand span{font-size:15px;font-weight:600;letter-spacing:-.01em;white-space:nowrap}
+.au-brand small{font-size:15px;font-weight:400;color:var(--st-ink2)}
+.au-nav a{font-size:13px;color:var(--st-ink);text-decoration:none;opacity:.82}
+.au-nav a:hover{opacity:1}
+@media (max-width:560px){.au-nav a.au-opt{display:none}.au-brand small{display:none}}
+
+/* hero */
+.au-top-hero{text-align:center;padding-top:clamp(56px,9vw,96px);overflow:hidden;position:relative}
+.au-eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:15px;font-weight:600;color:var(--st-ink);margin:0 0 14px}
+.au-eyebrow i{width:8px;height:8px;border-radius:50%;background:var(--st-hi);box-shadow:0 0 0 3px var(--st-mark)}
+.au-display{font-size:clamp(60px,12vw,120px);line-height:.98;font-weight:700;letter-spacing:-.05em;margin:0}
+.au-lede{font-size:clamp(23px,3.4vw,34px);line-height:1.16;font-weight:600;letter-spacing:-.022em;max-width:760px;margin:22px auto 0;text-wrap:balance}
+.au-lede span{color:var(--st-ink2)}
+.au-byline{font-size:14px;color:var(--st-ink3);margin:18px 0 0}
+.au-ctas{display:flex;gap:26px;justify-content:center;align-items:center;margin-top:30px;flex-wrap:wrap}
+.au-btn{display:inline-block;background:var(--st-accent);color:#fff;border-radius:980px;padding:12px 23px;font-size:17px;font-weight:500;text-decoration:none;border:0;cursor:pointer}
+.au-btn:hover{filter:brightness(1.25)}
+.au-lnk{background:none;border:0;padding:0;color:var(--st-link);font-size:17px;text-decoration:none;cursor:pointer}
+.au-lnk::after{content:"\00a0›"}
+.au-lnk:hover{text-decoration:underline}
+.au-phones{display:flex;justify-content:center;align-items:flex-start;margin-top:clamp(40px,6vw,64px);height:clamp(300px,52vw,560px)}
+.au-hp{flex:none;border:0;padding:0;background:none;cursor:pointer;width:27%;max-width:290px;margin:0 -2.5%;transition:transform .5s cubic-bezier(.2,.7,.2,1)}
+.au-hp img{display:block;width:100%;height:auto;filter:drop-shadow(0 28px 50px rgba(0,0,0,.2))}
+.au-hp.au-c{width:31%;max-width:330px;z-index:2}
+.au-hp.au-l{transform:translateY(12%) rotate(-5deg)}
+.au-hp.au-r{transform:translateY(12%) rotate(5deg)}
+.au-hp.au-l:hover{transform:translateY(9%) rotate(-5deg)}.au-hp.au-r:hover{transform:translateY(9%) rotate(5deg)}.au-hp.au-c:hover{transform:translateY(-3%)}
+
+/* sections */
+.au-sec{padding-block:clamp(72px,10vw,120px)}
+.au-sec.au-white{background:var(--st-card)}
+.au-kicker{font-size:15px;font-weight:600;color:var(--st-ink2);margin:0 0 12px}
+.au-h2{font-size:clamp(34px,5.2vw,56px);line-height:1.06;font-weight:700;letter-spacing:-.035em;margin:0;text-wrap:balance}
+.au-h2 span{color:var(--st-ink3)}
+.au-split{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(28px,6vw,80px);align-items:end}
+.au-split p{margin:0;font-size:clamp(17px,1.7vw,21px);line-height:1.45;color:var(--st-ink2);letter-spacing:-.01em}
+.au-split p b{color:var(--st-ink);font-weight:600}
+.au-split p + p{margin-top:16px}
+.au-stats{display:grid;grid-template-columns:repeat(3,1fr);margin-top:clamp(48px,7vw,80px);border-top:1px solid var(--st-hair)}
+.au-stat{padding:28px 20px 0 0}
+.au-stat b{display:block;font-size:clamp(40px,5.5vw,64px);font-weight:700;letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums}
+.au-stat span{display:block;font-size:15px;color:var(--st-ink2);margin-top:10px;max-width:22ch}
+.au-notes{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(20px,3vw,40px);margin-top:clamp(48px,7vw,72px)}
+.au-note h3{font-size:19px;font-weight:600;letter-spacing:-.015em;margin:0 0 8px}
+.au-note p{margin:0;font-size:15.5px;line-height:1.5;color:var(--st-ink2)}
+.au-note .au-ic{width:36px;height:36px;border-radius:10px;background:var(--st-ground);display:grid;place-items:center;margin-bottom:16px}
+.au-note .au-ic svg{width:19px;height:19px;stroke:var(--st-accent);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+/* ideas */
+.au-ideas-h{margin-bottom:clamp(32px,5vw,48px)}
+.au-list{background:var(--st-card);border-radius:28px;padding-inline:clamp(20px,4vw,44px)}
+.au-idea{display:grid;grid-template-columns:56px 1fr 220px;gap:20px;align-items:start;padding-block:clamp(26px,3.5vw,36px);border-top:1px solid var(--st-hair)}
+.au-idea:first-child{border-top:0}
+.au-idea .au-num{font-size:15px;font-weight:600;color:var(--st-ink3);font-variant-numeric:tabular-nums;padding-top:6px}
+.au-idea h3{font-size:clamp(21px,2.4vw,26px);line-height:1.2;font-weight:600;letter-spacing:-.022em;margin:0 0 8px}
+.au-idea p{margin:0 0 12px;font-size:17px;line-height:1.5;color:var(--st-ink2);max-width:58ch}
+.au-idea p code{font:600 15px ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--st-ink);background:var(--st-ground);padding:2px 7px;border-radius:6px}
+.au-idea .au-lnk{font-size:15px}
+.au-imp{text-align:right}
+.au-imp .au-v{font-size:clamp(30px,3.6vw,40px);font-weight:700;letter-spacing:-.035em;line-height:1;font-variant-numeric:tabular-nums;color:var(--st-accent)}
+.au-imp .au-l{font-size:13.5px;color:var(--st-ink2);margin-top:8px}
+.au-band{margin-top:20px;background:var(--st-accent);color:#fff;border-radius:28px;padding:clamp(32px,5vw,56px);display:grid;grid-template-columns:1fr auto;gap:clamp(28px,5vw,64px);align-items:center}
+.au-band .au-k{font-size:15px;font-weight:600;color:rgba(255,255,255,.62);margin:0 0 10px}
+.au-band h3{font-size:clamp(24px,3vw,32px);line-height:1.18;font-weight:600;letter-spacing:-.022em;margin:0;text-wrap:balance}
+.au-band .au-fn{font-size:13px;line-height:1.5;color:rgba(255,255,255,.55);margin:16px 0 0;max-width:52ch}
+.au-nums{display:flex;gap:clamp(28px,4vw,48px)}
+.au-nums small{display:block;font-size:13px;color:rgba(255,255,255,.62)}
+.au-nums b{display:block;font-size:clamp(48px,6.5vw,76px);font-weight:700;letter-spacing:-.045em;line-height:1;color:var(--st-hi);font-variant-numeric:tabular-nums;margin:4px 0 8px}
+.au-nums span{font-size:14px;color:rgba(255,255,255,.8)}
+.au-band .au-btn{background:var(--st-hi);color:var(--st-accent);font-weight:600;margin-top:26px}
+
+/* prototype */
+.au-proto-h{text-align:center;max-width:720px;margin:0 auto}
+.au-proto-h p{font-size:clamp(17px,1.7vw,21px);color:var(--st-ink2);margin:14px 0 0}
+.au-seg{display:flex;gap:4px;justify-content:center;margin:clamp(28px,4vw,40px) auto 0;padding:4px;background:var(--st-ground);border-radius:980px;width:max-content;max-width:100%;overflow-x:auto;scrollbar-width:none}
+.au-seg::-webkit-scrollbar{display:none}
+.au-chip{flex:none;display:inline-flex;align-items:center;gap:6px;background:none;border:0;color:var(--st-ink2);font-size:13.5px;font-weight:500;padding:8px 14px;border-radius:980px;cursor:pointer;white-space:nowrap}
+.au-chip:hover{color:var(--st-ink)}
+.au-chip.on{background:var(--st-card);color:var(--st-ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.au-chip i{font-style:normal;font-size:11px;font-weight:700;width:18px;height:18px;border-radius:50%;display:grid;place-items:center;background:var(--st-hi);color:var(--st-accent)}
+.au-stage{display:grid;grid-template-columns:auto minmax(0,420px);gap:clamp(32px,6vw,72px);justify-content:center;align-items:center;margin-top:clamp(28px,4vw,44px)}
+.phone{width:390px;height:844px;border-radius:56px;padding:10px;background:#0b0d10;box-shadow:0 0 0 1.5px #3a3d42,0 40px 90px rgba(0,0,0,.25);max-width:calc(100vw - 44px)}
+.phone-in{position:relative;width:100%;height:100%;border-radius:46px;overflow:hidden;background:var(--b-bg)}
+.island{position:absolute;top:11px;left:50%;transform:translateX(-50%);width:120px;height:34px;border-radius:20px;background:#000;z-index:9}
+.sbar{position:absolute;top:0;left:0;right:0;height:52px;display:flex;justify-content:space-between;align-items:center;padding:4px 32px 0;font:600 15px -apple-system,system-ui,sans-serif;color:var(--b-ink);z-index:8;pointer-events:none}
+.au-pn{background:var(--st-ground);border-radius:28px;padding:clamp(26px,3.5vw,38px)}
+.au-pn-k{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600;color:var(--st-ink)}
+.au-pn-k i{width:8px;height:8px;border-radius:50%;background:var(--st-hi);box-shadow:0 0 0 3px var(--st-mark)}
+.au-pn-k.au-ctx{color:var(--st-ink2)}.au-pn-k.au-ctx i{background:var(--st-ink3);box-shadow:none}
+.au-pn-t{font-size:clamp(24px,2.6vw,30px);line-height:1.12;font-weight:700;letter-spacing:-.028em;margin:10px 0 14px;text-wrap:balance}
+.au-pn-h{margin:0;font-size:17px;line-height:1.55;color:var(--st-ink2)}
+.au-pn-h b{color:var(--st-ink);font-weight:600}
+.au-pn-o{margin-top:24px;padding-top:22px;border-top:1px solid var(--st-hair)}
+.au-pn-o .au-lab{font-size:13px;font-weight:600;color:var(--st-ink3)}
+.au-pn-o .au-val{font-size:clamp(38px,4.4vw,50px);font-weight:700;letter-spacing:-.04em;line-height:1.05;color:var(--st-accent);margin-top:6px;font-variant-numeric:tabular-nums}
+.au-pn-o .au-sub{font-size:14px;color:var(--st-ink2);margin-top:4px}
+.au-pn-a{margin:18px 0 0;font-size:14px;line-height:1.5;color:var(--st-ink2)}
+.au-pn-nav{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:28px;padding-top:18px;border-top:1px solid var(--st-hair);font-size:13px;color:var(--st-ink3)}
+.au-pn-nav button{background:var(--st-card);border:0;border-radius:980px;padding:8px 15px;font-size:14px;font-weight:500;color:var(--st-ink);cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.au-pn-nav button:disabled{opacity:.35;cursor:default}
+.au-hint{text-align:center;font-size:14px;color:var(--st-ink3);margin:22px 0 0}
+
+/* footer */
+.au-foot{padding-block:56px 72px;border-top:1px solid var(--st-hair)}
+.au-foot details{border-bottom:1px solid var(--st-hair);padding-bottom:18px}
+.au-foot summary{cursor:pointer;font-size:17px;font-weight:600;list-style:none;display:flex;justify-content:space-between;align-items:center}
+.au-foot summary::-webkit-details-marker{display:none}
+.au-foot summary::after{content:"+";font-size:24px;font-weight:300;color:var(--st-ink2)}
+.au-foot details[open] summary::after{content:"−"}
+.au-srcs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 48px;margin-top:18px}
+.au-srcs h4{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--st-ink3);margin:18px 0 6px}
+.au-srcs dl{margin:0}.au-srcs dt{font-size:14.5px;font-weight:600;margin-top:10px}
+.au-srcs dd{margin:3px 0 0;font-size:14px;line-height:1.5;color:var(--st-ink2)}
+.au-fine{font-size:12.5px;line-height:1.6;color:var(--st-ink3);margin:22px 0 0;max-width:80ch}
+.au-cta-line{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;margin-top:36px}
+.au-cta-line p{margin:0;font-size:clamp(19px,2.2vw,24px);font-weight:600;letter-spacing:-.02em;max-width:34ch}
+
+@media (max-width:900px){
+  .au-split,.au-band{grid-template-columns:1fr}
+  .au-notes{grid-template-columns:1fr}
+  .au-idea{grid-template-columns:40px 1fr}
+  .au-imp{grid-column:2;text-align:left;display:flex;align-items:baseline;gap:10px}
+  .au-imp .au-l{margin:0}
+  .au-imp .au-v{white-space:nowrap}
+  .au-stage{grid-template-columns:1fr;justify-items:center}
+  .au-pn{width:100%;max-width:520px}
+  .au-srcs{grid-template-columns:1fr}
+}
+@media (max-width:560px){.au-stats{grid-template-columns:1fr}.au-stat{padding:22px 0 0}.au-nums{flex-direction:column;gap:18px}}
+
+/* ================= extras (audit side): video, language, phone view + QR, paywall today vs proposed, ?tour ================= */
+[hidden]{display:none!important}
+/* the device never scrolls: off-screen slides would otherwise make it scrollable by focus / scrollIntoView */
+.phone-in,.scr{overflow:clip}
+/* hero: walkthrough link */
+.au-play::before{content:"▶";font-size:.72em;margin-right:7px;position:relative;top:-1px}
+/* video dialog */
+.au-vid{border:0;padding:0;background:transparent;max-width:min(1120px,94vw);width:100%;overflow:visible}
+.au-vid::backdrop{background:rgba(0,0,0,.74);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.au-vid-in{background:#000;border-radius:18px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.4)}
+.au-vid video{display:block;width:100%;aspect-ratio:16/9;background:#000}
+.au-vid-bar{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:14px 4px 0;font-size:14px}
+.au-vid-bar a{color:#fff;opacity:.85}
+.au-vid-x{background:rgba(255,255,255,.16);border:0;color:#fff;border-radius:980px;padding:8px 16px;font-size:14px;cursor:pointer}
+/* language switch */
+.au-langrow{display:flex;justify-content:center;align-items:center;gap:12px;margin:18px 0 0;font-size:13.5px;color:var(--st-ink2);flex-wrap:wrap}
+.au-lsw{display:inline-flex;gap:2px;padding:3px;background:var(--st-ground);border-radius:980px}
+.au-lsw button{border:0;background:none;padding:6px 13px;border-radius:980px;font-size:13.5px;font-weight:500;color:var(--st-ink2);cursor:pointer;white-space:nowrap}
+.au-lsw button.on{background:var(--st-card);color:var(--st-ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+/* QR card (desktop) / full-screen button (phone) */
+.au-qr{display:flex;align-items:center;gap:18px;margin:26px auto 0;max-width:500px;background:var(--st-ground);border-radius:22px;padding:14px 22px 14px 14px}
+.au-qr img{width:112px;height:112px;border-radius:12px;image-rendering:pixelated;flex:none;background:#fff}
+.au-qr b{display:block;font-size:17px;font-weight:600;letter-spacing:-.01em}
+.au-qr p{margin:4px 0 0;font-size:14.5px;line-height:1.45;color:var(--st-ink2)}
+.au-mobw{display:none;text-align:center;margin-top:22px}
+@media (max-width:900px){.au-qr{display:none}.au-mobw{display:block}}
+/* paywall: today vs proposed */
+.au-cmp{display:grid;grid-template-columns:minmax(0,290px) minmax(0,1fr) minmax(0,290px);gap:clamp(24px,4vw,52px);align-items:center;margin-top:clamp(32px,5vw,52px)}
+.au-cmp figure{margin:0;text-align:center}
+.au-cmp figure img{display:block;width:100%;height:auto;filter:drop-shadow(0 24px 44px rgba(0,0,0,.18))}
+.au-cmp figcaption{margin-top:14px;font-size:15px;font-weight:600}
+.au-cmp figcaption span{color:var(--st-ink2);font-weight:400}
+.au-cmp-go{border:0;padding:0;background:none;cursor:pointer;display:block;width:100%;transition:transform .3s}
+.au-cmp-go:hover{transform:translateY(-4px)}
+.au-chg{list-style:none;margin:0;background:var(--st-card);border-radius:24px;padding:4px clamp(18px,2.4vw,28px)}
+.au-chg li{padding:15px 0;border-top:1px solid var(--st-hair)}
+.au-chg li:first-child{border-top:0}
+.au-chg h4{margin:0 0 7px;font-size:16px;font-weight:600;letter-spacing:-.01em;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.au-chg h4 i{font-style:normal;font-size:12px;font-weight:600;color:var(--st-accent);background:var(--st-mark);border-radius:6px;padding:2px 8px;white-space:nowrap}
+.au-was,.au-now{display:grid;grid-template-columns:78px 1fr;gap:8px;font-size:14.5px;line-height:1.42}
+.au-was{color:var(--st-ink3)}
+.au-now{color:var(--st-ink);margin-top:3px}
+.au-was em,.au-now em{font-style:normal;font-size:11.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding-top:2px}
+.au-now em{color:var(--st-link)}
+.au-kept{margin:22px 0 0;font-size:14px;color:var(--st-ink2);text-align:center}
+@media (max-width:900px){.au-cmp{grid-template-columns:1fr 1fr;gap:18px}.au-chg{grid-column:1 / -1;order:3}.au-was,.au-now{grid-template-columns:70px 1fr}}
+
+/* ?app — the prototype full screen on a real phone, with a bar that opens the idea panel */
+html.appmode,html.appmode body{height:100%;overflow:hidden;background:#000}
+html.appmode .au-nav,html.appmode .au-top-hero,html.appmode #why,html.appmode #ideas,html.appmode #compare,html.appmode .au-foot,
+html.appmode .au-proto-h,html.appmode #prototype .au-langrow,html.appmode #chips,html.appmode .au-hint,html.appmode .au-qr,html.appmode .au-mobw{display:none!important}
+html.appmode #prototype{padding:0;background:#000}
+html.appmode #prototype .au-wrap{padding:0;max-width:none}
+html.appmode .au-stage{display:block;margin:0}
+html.appmode .phone{position:fixed;top:0;left:0;right:0;margin:0 auto;width:min(100%,480px);height:calc(100% - 56px - env(safe-area-inset-bottom,0px));max-width:none;border-radius:0;padding:0;box-shadow:none;background:#000}
+html.appmode .phone-in{border-radius:0}
+html.appmode .island,html.appmode .sbar{display:none}
+html.appmode .scr .s-pad{padding-top:max(58px,calc(env(safe-area-inset-top,0px) + 16px))}
+html.appmode .scr .s-x,html.appmode .scr .s-lang{top:max(54px,calc(env(safe-area-inset-top,0px) + 10px))}
+.au-appbar,.au-scrim{display:none}
+html.appmode .au-appbar{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:70;height:calc(56px + env(safe-area-inset-bottom,0px));padding:0 12px env(safe-area-inset-bottom,0px) 16px;align-items:center;gap:12px;background:#0b0b0c;border-top:1px solid rgba(255,255,255,.1);color:#fff}
+.au-ab-why{flex:1;min-width:0;display:flex;align-items:center;gap:9px;background:none;border:0;color:#fff;font-size:14px;font-weight:500;text-align:left;cursor:pointer;padding:0}
+.au-ab-why i{width:8px;height:8px;border-radius:50%;background:var(--st-hi);flex:none}
+.au-ab-why span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.au-ab-why em{font-style:normal;color:rgba(255,255,255,.6);margin-left:auto;flex:none;font-size:13px}
+.au-appbar .au-lsw{background:rgba(255,255,255,.12)}
+.au-appbar .au-lsw button{color:rgba(255,255,255,.75);padding:5px 11px}
+.au-appbar .au-lsw button.on{background:#fff;color:#000}
+html.appmode #panel{position:fixed;left:0;right:0;bottom:0;z-index:80;max-width:none;width:auto;margin:0 auto;border-radius:24px 24px 0 0;max-height:78%;overflow:auto;transform:translateY(105%);transition:transform .3s cubic-bezier(.3,.7,.2,1);padding-bottom:calc(26px + env(safe-area-inset-bottom,0px))}
+html.appmode.au-open #panel{transform:none}
+html.appmode.au-open .au-scrim{display:block;position:fixed;inset:0;z-index:75;background:rgba(0,0,0,.5)}
+
+/* ?tour — 1280×720 walkthrough frames (record-video.sh renders them into assets/walkthrough.mp4) */
+.au-tour{display:none}
+html.tourmode,html.tourmode body{overflow:hidden;background:var(--st-ground)}
+html.tourmode body *{visibility:hidden}
+html.tourmode .phone,html.tourmode .phone *,html.tourmode .au-tour,html.tourmode .au-tour *{visibility:visible}
+html.tourmode .phone{position:fixed;left:170px;top:44px;margin:0;transform:scale(.755);transform-origin:0 0;box-shadow:0 0 0 1.5px #3a3d42,0 34px 80px rgba(0,0,0,.22);z-index:5;max-width:none}
+html.tourmode .au-tour{display:block;position:fixed;inset:0;z-index:6;pointer-events:none;color:var(--st-ink)}
+.au-tb{position:absolute;left:590px;top:30px;display:flex;align-items:center;gap:10px;font-size:16px;font-weight:600}
+.au-tb img{width:26px;height:26px;border-radius:7px}
+.au-tb small{font-size:16px;font-weight:400;color:var(--st-ink2)}
+.au-tby{position:absolute;right:48px;top:32px;font-size:14px;color:var(--st-ink3)}
+.au-tcap{position:absolute;left:590px;right:60px;top:50%;transform:translateY(-50%)}
+.au-tk{display:flex;align-items:center;gap:9px;font-size:17px;font-weight:600}
+.au-tk i{width:9px;height:9px;border-radius:50%;background:var(--st-hi);box-shadow:0 0 0 3px var(--st-mark)}
+.au-tk.au-ctx{color:var(--st-ink2)}.au-tk.au-ctx i{background:var(--st-ink3);box-shadow:none}
+.au-tt{font-size:46px;line-height:1.06;font-weight:700;letter-spacing:-.035em;margin:14px 0 14px;text-wrap:balance}
+.au-tl{font-size:23px;line-height:1.36;color:var(--st-ink2);letter-spacing:-.01em;margin:0;max-width:28ch}
+.au-to{margin-top:28px;padding-top:22px;border-top:1px solid var(--st-hair)}
+.au-to small{display:block;font-size:14px;font-weight:600;color:var(--st-ink3)}
+.au-to b{display:inline-block;font-size:62px;font-weight:700;letter-spacing:-.045em;line-height:1.08;color:var(--st-accent);margin-top:4px}
+.au-to span{display:block;font-size:16px;color:var(--st-ink2);margin-top:2px}
+.au-tprog{position:absolute;left:48px;right:48px;bottom:22px;height:4px;border-radius:3px;background:var(--st-hair);overflow:hidden}
+.au-tprog i{display:block;height:100%;background:var(--st-hi)}
+.au-ttap{position:absolute;left:0;top:0;width:46px;height:46px;margin:-23px 0 0 -23px;border-radius:50%;background:rgba(255,255,255,.5);box-shadow:0 0 0 2.5px rgba(255,255,255,.9),0 6px 16px rgba(0,0,0,.35);opacity:0}
+.au-tintro,.au-tend{position:absolute;inset:0;background:var(--st-ground);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;opacity:0}
+.au-tintro .au-lede{margin-top:18px}
+.au-te-h{font-size:46px;line-height:1.08;font-weight:700;letter-spacing:-.035em;margin:0;max-width:18ch;text-wrap:balance}
+.au-te-n{display:flex;gap:64px;margin-top:30px}
+.au-te-n small{display:block;font-size:14px;color:var(--st-ink2)}
+.au-te-n b{display:block;font-size:76px;font-weight:700;letter-spacing:-.045em;line-height:1;color:var(--st-accent);margin:4px 0 6px}
+.au-te-n span{font-size:15px;color:var(--st-ink2)}
+.au-te-q{display:flex;align-items:center;gap:18px;margin-top:34px;background:var(--st-card);border-radius:20px;padding:12px 24px 12px 12px;text-align:left}
+.au-te-q img{width:104px;height:104px;border-radius:10px;image-rendering:pixelated}
+.au-te-q b{display:block;font-size:18px;font-weight:600}
+.au-te-q span{display:block;font-size:15px;color:var(--st-link);margin-top:3px}
+.au-te-f{position:absolute;bottom:44px;left:0;right:0;font-size:13px;color:var(--st-ink3);margin:0}
+
+/* ---------- screen engine (layout only, no colours) ---------- */
+.scr{position:absolute;inset:0;display:flex;flex-direction:column;background:var(--b-bg);color:var(--b-ink);font-family:var(--b-font);
+     transform:translateX(100%);transition:transform .32s cubic-bezier(.3,.7,.2,1);overflow:hidden;text-align:left;line-height:normal;font-size:16px}
+.scr.is-active{transform:none;z-index:2}.scr.is-past{transform:translateX(-28%)}.scr.under{transform:none;z-index:1}
+.scr.sheet{transform:translateY(100%)}.scr.sheet.is-active{transform:none}
+.nofx,.nofx *{transition:none!important}
+.shot .scr{transition:none!important}
+/* ?phone — just the device at (10,10), for shoot.sh and hero-stills.sh (&clear = transparent ground) */
+.phoneonly body{background:#141615}
+.phoneonly.clear body{background:transparent}
+.phoneonly body *{visibility:hidden}
+.phoneonly .phone,.phoneonly .phone *{visibility:visible}
+.phoneonly .phone{position:fixed;top:10px;left:10px;z-index:99;box-shadow:none;max-width:none;margin:0}
+
+/* SCREENS:START — DOWN's screens: navy ground, pink CTA, Geist, white selected tiles (sampled off their in-app mockups on downapp.com) */
+.s-pad{position:relative;z-index:1;flex:1;display:flex;flex-direction:column;gap:12px;padding:58px 22px 28px;min-height:0}
+.d-nav{display:flex;align-items:center;justify-content:space-between;height:34px;flex:none}
+.d-back{background:none;border:0;padding:0;width:34px;height:34px;color:var(--b-ink);cursor:pointer;display:grid;place-items:center}
+.d-back svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.d-prog{width:48px;height:4px;border-radius:4px;background:var(--b-line);overflow:hidden}
+.d-prog i{display:block;height:100%;background:var(--b-primary);border-radius:4px}
+.d-skip{background:none;border:0;padding:0;min-width:34px;color:var(--b-ink);font:500 15px var(--b-font);cursor:pointer;text-align:right}
+.d-h{font:700 28px/1.14 var(--b-font);letter-spacing:-.02em;margin:10px 0 0}
+.d-sub{font:400 14.5px/1.45 var(--b-font);color:var(--b-ink2);margin:0}
+.d-sub b{color:var(--b-ink);font-weight:600}
+.s-cta{flex:none;width:100%;border:0;border-radius:14px;background:var(--b-primary);color:var(--b-primary-ink);font:600 17px var(--b-font);padding:16px;cursor:pointer;margin-top:auto}
+.d-note{font:400 13px/1.4 var(--b-font);color:var(--b-ink2);text-align:center;margin:0}
+
+/* welcome */
+.scr.w-scr{background:var(--b-deep)}
+.w-art{position:absolute;left:0;top:176px;width:100%;height:auto;display:block}
+.w-fade{position:absolute;left:0;right:0;top:440px;bottom:0;background:linear-gradient(180deg,transparent,var(--b-deep) 46%)}
+.w-top{position:absolute;left:0;right:0;top:0;height:230px;background:linear-gradient(180deg,var(--b-deep) 70%,transparent)}
+.w-h{font:800 33px/1.08 var(--b-font);letter-spacing:-.025em;text-align:center;margin:30px 6px 0}
+.w-bot{margin-top:auto;display:flex;flex-direction:column;gap:10px}
+.w-sub{font:500 15px/1.4 var(--b-font);text-align:center;color:var(--b-ink);margin:0 12px 8px}
+.w-alt{width:100%;border:1.5px solid rgba(255,255,255,.32);background:rgba(255,255,255,.06);color:var(--b-ink);border-radius:14px;padding:15px;font:600 16px var(--b-font);cursor:pointer}
+.w-fine{font:400 11.5px/1.4 var(--b-font);color:var(--b-ink2);text-align:center;margin:4px 0 0}
+
+/* GET DOWN / GET DATE */
+.i-opt{display:flex;align-items:center;gap:16px;width:100%;background:var(--b-tile);border:0;border-radius:18px;padding:18px;color:var(--b-ink);text-align:left;cursor:pointer;font-family:var(--b-font)}
+.i-opt img{width:46px;height:46px;flex:none}
+.i-opt b{display:block;font:800 19px var(--b-font);letter-spacing:.01em}
+.i-opt small{display:block;font:400 14px var(--b-font);color:var(--b-ink2);margin-top:3px}
+.i-opt.on{background:var(--b-sel);color:var(--b-bg)}
+.i-opt.on small{color:var(--b-tile)}
+.i-first{margin-top:14px}
+.i-sp{flex:1}
+
+/* highlight quiz */
+.h-card{align-self:center;width:136px;margin:6px 0 8px;border-radius:14px;overflow:hidden;transform:rotate(-4deg);box-shadow:0 14px 30px rgba(0,0,0,.35);background:var(--b-sel);flex:none}
+.h-card-k{display:block;text-align:center;font:600 12.5px var(--b-font);color:var(--b-bg);padding:7px 0 6px}
+.h-card-art{height:140px;background:linear-gradient(180deg,var(--b-hl1),var(--b-hl2));display:grid;place-items:center}
+.h-card-art img{width:116px;height:116px;object-fit:contain}
+.h-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.h-tile{height:92px;border:0;border-radius:16px;background:var(--b-tile);display:grid;place-items:center;cursor:pointer;padding:6px}
+.h-tile img{max-width:84px;max-height:78px;object-fit:contain}
+.h-tile.on{background:var(--b-sel)}
+
+/* verification */
+.v-oval{align-self:center;width:164px;height:204px;border-radius:50%;border:3px dashed var(--b-primary);display:grid;place-items:center;margin:8px 0 4px;background:rgba(255,255,255,.04);flex:none}
+.v-face{width:92px;height:92px;stroke:var(--b-ink2);fill:none;stroke-width:1.5;stroke-linecap:round}
+.v-ok{width:84px;height:84px;border-radius:50%;background:var(--b-primary);display:grid;place-items:center}
+.v-ok svg{width:44px;height:44px;stroke:var(--b-ink);fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.v-proof{background:var(--b-surface);border-radius:16px;padding:4px 16px}
+.v-row{display:flex;align-items:center;gap:12px;padding:11px 0;font:500 14px/1.35 var(--b-font);border-top:1px solid rgba(255,255,255,.08)}
+.v-row:first-child{border-top:0}
+.v-ic{flex:none;width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.1);display:grid;place-items:center;font:700 11px var(--b-font);color:var(--b-ink)}
+.v-ic.v-pk{background:var(--b-primary)}
+.v-ic svg{width:15px;height:15px;stroke:var(--b-ink);fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+
+/* picks */
+.p-top{position:relative;z-index:2;display:flex;align-items:center;gap:6px;padding:54px 12px 0;flex:none;overflow:hidden}
+.p-av{width:34px;height:34px;border-radius:50%;background:var(--b-surface);display:grid;place-items:center;flex:none}
+.p-av svg,.p-pin{width:18px;height:18px;fill:var(--b-ink2)}
+.p-pin{flex:none;margin-left:2px}
+.p-pill{flex:none;font:600 13.5px var(--b-font);color:var(--b-ink2);border:1px solid rgba(255,255,255,.18);border-radius:999px;padding:8px 12px;white-space:nowrap}
+.p-pill.on{background:linear-gradient(90deg,var(--b-purple),var(--b-primary));color:var(--b-ink);border-color:transparent}
+.p-pill i{font-style:normal;font-size:9.5px;font-weight:800;background:var(--b-ink);color:var(--b-primary);border-radius:4px;padding:1px 4px;margin-left:4px;vertical-align:1px}
+.p-card{position:relative;margin:10px 12px 0;height:444px;border-radius:18px;overflow:hidden;flex:none;background:var(--b-surface)}
+.p-card img{width:100%;height:100%;object-fit:cover;object-position:center 100%;display:block}
+.p-tip{margin:10px 14px 0;background:var(--b-sel);color:var(--b-bg);border-radius:14px;padding:10px 14px;font:500 12.5px/1.35 var(--b-font);position:relative;flex:none}
+.p-tip b{display:block;font-weight:700;font-size:14px;margin-bottom:1px}
+.p-tip::after{content:"";position:absolute;bottom:-6px;right:76px;width:12px;height:12px;background:var(--b-sel);transform:rotate(45deg)}
+.p-acts{display:flex;justify-content:center;align-items:flex-start;gap:28px;margin-top:12px;flex:none}
+.p-act{display:flex;flex-direction:column;align-items:center;gap:5px;background:none;border:0;cursor:pointer;color:var(--b-ink);font:500 12.5px var(--b-font);padding:0}
+.p-c{width:60px;height:60px;border-radius:50%;background:var(--b-sel);display:grid;place-items:center;box-shadow:0 0 0 3px rgba(255,255,255,.14)}
+.p-c img{width:32px;height:32px}
+.p-act.p-sm .p-c{width:44px;height:44px;background:var(--b-line);margin-top:8px;box-shadow:none}
+.p-c svg{width:20px;height:20px;fill:var(--b-ink)}
+.p-tabs{margin-top:auto;display:flex;justify-content:space-around;padding:8px 0 24px;flex:none;border-top:1px solid rgba(255,255,255,.06)}
+.p-tab{display:flex;flex-direction:column;align-items:center;gap:4px;font:500 11.5px var(--b-font);color:var(--b-ink2);position:relative}
+.p-tab.on{color:var(--b-ink)}
+.p-tab svg{width:22px;height:22px;fill:currentColor}
+.p-badge{position:absolute;top:-5px;right:2px;background:var(--b-primary);color:var(--b-ink);font:700 10px var(--b-font);border-radius:999px;min-width:16px;height:16px;display:grid;place-items:center;padding:0 4px}
+
+/* likes */
+.l-k{font:700 17px var(--b-font);text-align:center;margin:0;height:34px;display:grid;place-items:center;flex:none}
+.l-n{display:inline-grid;place-items:center;min-width:42px;height:40px;border-radius:12px;background:var(--b-primary);color:var(--b-ink);padding:0 8px;vertical-align:3px;font-size:25px}
+.l-goal{color:var(--b-primary)}
+.l-grid{display:grid;grid-template-columns:1.2fr 1fr;grid-template-rows:1fr 1fr;gap:10px;height:318px;margin-top:6px;flex:none}
+.l-c{position:relative;border-radius:16px;overflow:hidden;background:var(--b-surface)}
+.l-c:first-child{grid-row:1 / 3}
+.l-c img{width:100%;height:100%;object-fit:cover;filter:blur(13px) saturate(1.15);transform:scale(1.3);display:block}
+.l-tag{position:absolute;left:10px;top:10px;background:var(--b-ink);color:var(--b-bg);font:600 11.5px var(--b-font);border-radius:999px;padding:4px 9px}
+.l-meta{position:absolute;left:10px;bottom:10px;font:600 13px var(--b-font);color:var(--b-ink);display:flex;align-items:center;gap:5px}
+.l-meta i{width:15px;height:15px;border-radius:50%;background:var(--b-primary);display:grid;place-items:center}
+.l-meta svg{width:9px;height:9px;stroke:var(--b-ink);fill:none;stroke-width:3.4;stroke-linecap:round;stroke-linejoin:round}
+
+/* paywall (proposed and today share the shell) */
+.pw-glow{position:absolute;left:0;right:0;top:0;height:560px;background:var(--b-grad);pointer-events:none}
+.s-pad.pw-pad{padding-top:96px;gap:0}
+.pw-h{font:700 35px/1.08 var(--b-font);letter-spacing:-.025em;margin:0 0 24px;max-width:300px}
+.pw-ben{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px}
+.pw-ben li{display:flex;align-items:center;gap:12px;font:500 15.5px var(--b-font)}
+.pw-ben i{width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.12);display:grid;place-items:center;flex:none}
+.pw-ben svg{width:15px;height:15px;fill:none;stroke:var(--b-ink);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.pw-ben li.pw-dim{opacity:.45}
+.pw-plans{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:auto}
+.pw-pad .s-cta{margin-top:0}
+.pw-p{position:relative;text-align:left;background:var(--b-surface);border:1.5px solid transparent;border-radius:14px;padding:12px 9px;color:var(--b-ink);cursor:pointer;font-family:var(--b-font);display:flex;flex-direction:column;gap:2px;min-height:118px}
+.pw-p small{font:500 11px/1.25 var(--b-font);color:var(--b-ink2);padding-right:14px}
+.pw-p b{font:700 15.5px var(--b-font);letter-spacing:-.01em;margin-top:3px;white-space:nowrap}
+.pw-pr{font:600 14px var(--b-font);margin-top:auto;white-space:nowrap}
+.pw-save{font-style:normal;align-self:flex-start;background:var(--b-primary);color:var(--b-ink);font:700 10.5px var(--b-font);border-radius:999px;padding:3px 8px;margin-top:5px;white-space:nowrap}
+.pw-p.on{border-color:var(--b-primary)}
+.pw-p.on small{color:var(--b-primary)}
+.pw-ck{position:absolute;top:10px;right:8px;width:15px;height:15px;display:none;stroke:var(--b-primary);fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.pw-p.on .pw-ck{display:block}
+.pw-bill{font:400 12.5px/1.4 var(--b-font);color:var(--b-ink);margin:10px 0 14px;min-height:18px}
+.pw-proof{text-align:center;font:500 12.5px var(--b-font);color:var(--b-ink);margin:12px 0 0}
+.pw-proof b{color:var(--b-primary)}
+.pw-legal{text-align:center;font:400 11.5px var(--b-font);color:var(--b-ink2);margin:6px 0 0}
+.s-x{position:absolute;top:56px;right:18px;z-index:3;width:32px;height:32px;border-radius:50%;border:0;background:rgba(255,255,255,.14);color:var(--b-ink);font:500 15px var(--b-font);cursor:pointer;display:grid;place-items:center}
+/* today: their horizontal plan cards */
+.t-plans{display:flex;gap:10px;margin:auto -22px 0 0;overflow:hidden}
+.t-p{flex:none;width:262px;height:176px;background:var(--b-surface);border:1.5px solid transparent;border-radius:14px;padding:16px;display:flex;flex-direction:column;position:relative}
+.t-p.on{border-color:var(--b-primary)}
+.t-p small{font:500 15px var(--b-font);color:var(--b-ink2)}
+.t-p.on small{color:var(--b-primary)}
+.t-p b{font:700 22px var(--b-font);margin-top:4px}
+.t-p .pw-ck{display:block;width:20px;height:20px;top:16px;right:16px}
+.t-row{margin-top:auto;display:flex;justify-content:space-between;align-items:center;font:600 15px var(--b-font)}
+.t-row s{color:var(--b-ink2);font-weight:500;margin-left:4px}
+.t-row .pw-save{margin:0;font-size:13px;padding:4px 10px}
+
+/* offer on close */
+.scr.o-sheet{background:rgba(0,0,0,.55)}
+.o-panel{margin-top:auto;position:relative;background:var(--b-bg);border-radius:26px 26px 0 0;padding:26px 22px 30px;display:flex;flex-direction:column;gap:12px;box-shadow:0 -10px 40px rgba(0,0,0,.4)}
+.o-grab{width:40px;height:5px;border-radius:3px;background:var(--b-line);align-self:center;margin:-12px 0 2px}
+.o-x{position:absolute;top:18px;right:16px;width:30px;height:30px;border-radius:50%;border:0;background:rgba(255,255,255,.12);color:var(--b-ink);font:500 14px var(--b-font);cursor:pointer;display:grid;place-items:center}
+.o-fire{width:66px;height:66px;align-self:center;filter:drop-shadow(0 8px 18px rgba(0,0,0,.45))}
+.o-k{text-align:center;font:700 12.5px var(--b-font);color:var(--b-primary);margin:0;text-transform:uppercase;letter-spacing:.07em}
+.o-h{text-align:center;font:700 25px/1.15 var(--b-font);letter-spacing:-.02em;margin:0}
+.o-panel .d-sub{text-align:center}
+.o-price{display:flex;justify-content:space-between;align-items:center;background:var(--b-surface);border:1.5px solid var(--b-primary);border-radius:14px;padding:16px;font:600 15px var(--b-font);margin-top:6px}
+.o-price b{font:700 20px var(--b-font)}
+.o-panel .s-cta{margin-top:4px}
+.o-no{background:none;border:0;color:var(--b-ink2);font:500 14.5px var(--b-font);cursor:pointer;padding:4px}
+/* SCREENS:END */
+</style>
+</head>
+<body>
+
+<nav class="au-nav" aria-label="Sections">
+  <div class="au-nav-in">
+    <div class="au-brand">
+      <img src="assets/brand/appstore-icon.jpg" alt="">
+      <span>Growth Audit <small>· DOWN</small></span>
+    </div>
+    <a class="au-opt" href="#why">Why this</a>
+    <a href="#ideas">Five ideas</a>
+    <a href="#prototype">Prototype</a>
+    <a class="au-opt" href="#compare" id="navCompare" hidden>Paywall</a>
+  </div>
+</nav>
+
+<header class="au-top-hero" id="top">
+  <div class="au-wrap">
+    <p class="au-eyebrow"><i></i>Growth Audit · October 2026</p>
+    <h1 class="au-display">DOWN</h1>
+    <p class="au-lede">Five ideas to turn more DOWN singles into VIP members. <span>Each one built into your own onboarding, so you can tap through it.</span></p>
+    <p class="au-byline">Prepared by Adapty for the DOWN team</p>
+    <div class="au-ctas">
+      <a class="au-btn" href="#ideas">See the five ideas</a>
+      <a class="au-lnk" href="#prototype">Open the prototype</a>
+      <button type="button" class="au-lnk au-play" id="heroVideo" hidden>Watch the 30-second walkthrough</button>
+    </div>
+  </div>
+  <!-- filled from CONTENT.hero: three screen ids → assets/hero/<id>.png (make them with hero-stills.sh) -->
+  <div class="au-phones" id="heroPhones" aria-label="Three screens from the prototype"></div>
+</header>
+
+<section class="au-sec au-white" id="why">
+  <div class="au-wrap">
+    <div class="au-split">
+      <div>
+        <p class="au-kicker">Why you’re seeing this</p>
+        <h2 class="au-h2">30,000 subscription apps taught us what moves conversion. <span>Here’s what we’d test first at DOWN.</span></h2>
+      </div>
+      <div>
+        <p>Adapty runs subscriptions for <b>more than 30,000 apps</b>, so we see which onboarding and paywall changes lift revenue across the whole market, not just inside one app.</p>
+        <p>We pointed that at DOWN. We took <b>your own screens, copy and prices</b> from your App Store listing and site, and rebuilt the path from install to paywall around the five ideas with the most potential.</p>
+      </div>
+    </div>
+    <div class="au-stats">
+      <div class="au-stat"><b>30,000+</b><span>apps run their subscriptions on Adapty</span></div>
+      <div class="au-stat"><b>5</b><span>ideas, each built as a working screen</span></div>
+      <div class="au-stat"><b>0</b><span>changes to your art direction</span></div>
+    </div>
+    <div class="au-notes">
+      <div class="au-note">
+        <div class="au-ic"><svg viewBox="0 0 24 24"><path d="M12 3l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.4 6.8 19.1l1-5.8L3.5 9.2l5.9-.9z"/></svg></div>
+        <h3>Five ideas, not fifteen</h3>
+        <p>We’re not proposing to rebuild every screen. These are the changes with the highest potential, ranked by what we’d test first.</p>
+      </div>
+      <div class="au-note">
+        <div class="au-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5v17M3.5 12h17"/></svg></div>
+        <h3>Your design, not ours</h3>
+        <p>Every colour, control and price in the prototype is DOWN’s. We changed the order and what gets shown.</p>
+      </div>
+      <div class="au-note">
+        <div class="au-ic"><svg viewBox="0 0 24 24"><path d="M9 11l3 3 8-8"/><path d="M20 12v6.5a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 18.5v-13A1.5 1.5 0 0 1 5.5 4H15"/></svg></div>
+        <h3>We hope you haven’t tried these yet</h3>
+        <p>We work from the outside, so we can’t see your live flow or your test history. If you’ve already run one of these, tell us and we’ll go deeper on the rest.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="au-sec" id="ideas">
+  <div class="au-wrap">
+    <div class="au-ideas-h">
+      <p class="au-kicker">The shortlist</p>
+      <h2 class="au-h2">Five ideas. <span>Ranked by what we’d test first.</span></h2>
+    </div>
+    <div class="au-list" id="ideaList"></div>
+    <div class="au-band">
+      <div>
+        <p class="au-k">Potential outcome, based on Adapty data</p>
+        <h3>Together they work on three moments: the answer you already ask for, what people see before the paywall, and what happens when they say no.</h3>
+        <p class="au-fn" id="bandFn"></p>
+        <a class="au-btn" href="#prototype">Tap through the prototype</a>
+      </div>
+      <div class="au-nums" id="bandNums"></div>
+    </div>
+  </div>
+</section>
+
+<section class="au-sec au-white" id="prototype">
+  <div class="au-wrap">
+    <div class="au-proto-h">
+      <p class="au-kicker">The prototype</p>
+      <h2 class="au-h2">Every idea, inside your own onboarding.</h2>
+      <p>Tap through it like a new user, or jump straight to an idea. Pink numbers mark the screens that carry one.</p>
+    </div>
+    <div class="au-langrow" id="langRow" hidden><span>Prototype language</span><div class="au-lsw" id="langSw" role="group" aria-label="Prototype language"></div></div>
+    <div class="au-seg" id="chips" role="tablist" aria-label="Screens"></div>
+    <div class="au-stage">
+      <div class="phone"><div class="phone-in">
+        <div class="island"></div>
+        <div class="sbar"><span>9:41</span><span>●●● ▮</span></div>
+
+<!-- SCREENS:START — DOWN: welcome → GET DOWN/GET DATE → highlight → verify → picks → likes → paywall → offer on close (+ today, aside) -->
+
+<section class="scr w-scr" data-id="welcome">
+  <img class="w-art" src="assets/crop/welcome-art.jpg" alt="">
+  <div class="w-top"></div>
+  <div class="w-fade"></div>
+  <div class="s-pad">
+    <h1 class="w-h" data-t="w_h">Thirsty for something a little different?</h1>
+    <div class="w-bot">
+      <p class="w-sub" data-t="w_sub">19+ million open-minded singles exploring and keeping it real.</p>
+      <button class="s-cta" data-go="intent"><span data-t="w_apple">Sign up with Apple</span></button>
+      <button class="w-alt" data-go="intent"><span data-t="w_phone">Use mobile number</span></button>
+      <p class="w-fine" data-t="w_fine">By signing up you agree to our Terms and Privacy Policy.</p>
+    </div>
+  </div>
+</section>
+
+<section class="scr" data-id="intent">
+  <div class="s-pad">
+    <div class="d-nav"><button class="d-back" data-back aria-label="Back"><svg viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button><span class="d-prog"><i style="width:25%"></i></span><span class="d-skip"></span></div>
+    <h1 class="d-h" data-t="i_h">What are you looking for?</h1>
+    <p class="d-sub" data-t="i_sub">Be straightforward and date the honest way. You can change it any time.</p>
+    <button class="i-opt i-first" data-pick="intent:down" data-advance="highlight"><img src="assets/brand/icon-down.svg" alt=""><span><b>GET DOWN</b><small data-t="i_down">Casual fun</small></span></button>
+    <button class="i-opt" data-pick="intent:date" data-advance="highlight"><img src="assets/brand/icon-date.svg" alt=""><span><b>GET DATE</b><small data-t="i_date">Something more serious</small></span></button>
+    <div class="i-sp"></div>
+    <p class="d-note" data-t="i_note">We only tell people you like them if they like you too.</p>
+  </div>
+</section>
+
+<section class="scr" data-id="highlight">
+  <div class="s-pad">
+    <div class="d-nav"><button class="d-back" data-back aria-label="Back"><svg viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button><span class="d-prog"><i style="width:50%"></i></span><button class="d-skip" data-go="verify"><span data-t="skip">Skip</span></button></div>
+    <h1 class="d-h" data-t="h_h">What is your highlight?</h1>
+    <p class="d-sub" data-t="h_sub">Let your matches know your standout feature and what makes you a catch.</p>
+    <div class="h-card"><span class="h-card-k" data-t="h_card">My highlight</span><div class="h-card-art"><img id="hlBig" src="assets/crop/hl-funny.png" alt=""></div></div>
+    <div class="h-grid">
+      <button class="h-tile" data-pick="hl:funny"><img src="assets/crop/hl-funny.png" alt="Funny"></button>
+      <button class="h-tile" data-pick="hl:ambitious"><img src="assets/crop/hl-ambitious.png" alt="Ambitious"></button>
+      <button class="h-tile" data-pick="hl:smart"><img src="assets/crop/hl-smart.png" alt="Wicked Smart"></button>
+      <button class="h-tile" data-pick="hl:sapio"><img src="assets/crop/hl-sapio.png" alt="Sapiosexual"></button>
+    </div>
+    <button class="s-cta" data-go="verify"><span data-t="cont">Continue</span></button>
+  </div>
+</section>
+
+<section class="scr" data-id="verify">
+  <div class="s-pad">
+    <div class="d-nav"><button class="d-back" data-back aria-label="Back"><svg viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button><span class="d-prog"><i style="width:75%"></i></span><span class="d-skip"></span></div>
+    <h1 class="d-h" data-t="v_h">Show us it’s really you</h1>
+    <p class="d-sub" data-t="v_sub">Take a quick selfie. Every DOWN user is photo-verified from the start.</p>
+    <div class="v-oval">
+      <div data-show="ver:0"><svg class="v-face" viewBox="0 0 96 96"><circle cx="48" cy="38" r="17"/><path d="M18 86c3-17 15-26 30-26s27 9 30 26"/></svg></div>
+      <div data-show="ver:1"><div class="v-ok"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div></div>
+    </div>
+    <div class="v-proof">
+      <div class="v-row"><span class="v-ic v-pk"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span data-t="v_p1">Everyone you’ll see passed this same check</span></div>
+      <div class="v-row"><span class="v-ic">★</span><span data-t="v_p2">4.3 on the App Store, from 130K ratings</span></div>
+      <div class="v-row"><span class="v-ic">19M</span><span data-t="v_p3">19+ million open-minded singles</span></div>
+    </div>
+    <button class="s-cta v-shoot" data-pick="ver:1" data-show="ver:0"><span data-t="v_cta">Take a selfie</span></button>
+    <button class="s-cta v-go" data-go="picks" data-show="ver:1"><span data-t="cont">Continue</span></button>
+  </div>
+</section>
+
+<section class="scr" data-id="picks">
+  <div class="p-top">
+    <span class="p-av"><svg viewBox="0 0 24 24"><circle cx="12" cy="8.5" r="4"/><path d="M4 21c.8-4.4 4-6.5 8-6.5s7.2 2.1 8 6.5z"/></svg></span>
+    <span class="p-pill on" data-t="p_near">Nearby</span>
+    <span class="p-pill">🦄 Group Play<i>TOP</i></span>
+    <span class="p-pill">👑 Hot</span>
+    <svg class="p-pin" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/></svg>
+  </div>
+  <div class="p-card">
+    <img data-show="intent:down" src="assets/crop/card-2.png" alt="Lexi, 21">
+    <img data-show="intent:date" src="assets/crop/card-9.png" alt="Maya, 25">
+  </div>
+  <div class="p-tip"><b data-t="p_tip_h">Your first picks, matched to your answer</b><span data-t="p_tip">Tap Down or Date. We only tell them if they’re into you too.</span></div>
+  <div class="p-acts">
+    <button class="p-act p-date" data-go="likes"><span class="p-c"><img src="assets/brand/icon-date.svg" alt=""></span>Date</button>
+    <button class="p-act p-sm" data-go="likes"><span class="p-c"><svg viewBox="0 0 24 24"><path d="M12 3C6.5 3 2.5 6.8 2.5 11.3c0 2.5 1.2 4.6 3.1 6.1L4.8 21l4-2.1c1 .3 2.1.4 3.2.4 5.5 0 9.5-3.7 9.5-8.2S17.5 3 12 3z"/></svg></span>Flirt</button>
+    <button class="p-act p-down" data-go="likes"><span class="p-c"><img src="assets/brand/icon-down.svg" alt=""></span>Down</button>
+  </div>
+  <div class="p-tabs">
+    <span class="p-tab on"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="11" height="16" rx="2.5"/><path d="M18 6.5c1.2.3 2 1.3 2 2.5v8.5c0 1.9-1.6 3.5-3.5 3.5H9.5c-1.2 0-2.2-.6-2.8-1.5h9.8c.9 0 1.5-.7 1.5-1.5z"/></svg>Picks</span>
+    <span class="p-tab"><svg viewBox="0 0 24 24"><path d="M12 21c-1 0-9-5.9-9-11.4C3 4.8 9.1 2.1 12 6.4c2.9-4.3 9-1.6 9 3.2C21 15.1 13 21 12 21z"/></svg><span data-t="t_vis">Visitors</span><span class="p-badge">3</span></span>
+    <span class="p-tab"><svg viewBox="0 0 24 24"><path d="M12 3C6.5 3 2.5 6.8 2.5 11.3c0 2.5 1.2 4.6 3.1 6.1L4.8 21l4-2.1c1 .3 2.1.4 3.2.4 5.5 0 9.5-3.7 9.5-8.2S17.5 3 12 3z"/></svg>Chats</span>
+  </div>
+</section>
+
+<section class="scr" data-id="likes">
+  <div class="s-pad">
+    <p class="l-k" data-t="l_k">Visitors</p>
+    <h1 class="d-h"><span class="l-n">3</span> <span data-t="l_h1">people looking for</span> <span class="l-goal" data-bind="label:intent"></span> <span data-t="l_h2">already liked you</span></h1>
+    <p class="d-sub"><span data-t="l_sub">They saw your</span> <b data-bind="label:hl"></b><span data-t="l_sub2"> highlight. Like them back and it’s a match.</span></p>
+    <div class="l-grid">
+      <div class="l-c"><img src="assets/crop/card-7.png" alt=""><span class="l-tag" data-t="l_tag">Likes you</span><span class="l-meta">22 <i><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></i></span></div>
+      <div class="l-c"><img src="assets/crop/card-6.png" alt=""><span class="l-tag" data-t="l_tag">Likes you</span><span class="l-meta">23 <i><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></i></span></div>
+      <div class="l-c"><img src="assets/crop/card-4.png" alt=""><span class="l-tag" data-t="l_tag">Likes you</span><span class="l-meta">22 <i><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></i></span></div>
+    </div>
+    <button class="s-cta" data-go="paywall"><span data-t="l_cta">See who liked you</span></button>
+  </div>
+</section>
+
+<section class="scr" data-id="paywall">
+  <div class="pw-glow"></div>
+  <button class="s-x" data-go="offer" aria-label="Close">✕</button>
+  <div class="s-pad pw-pad">
+    <h1 class="pw-h"><span data-show="intent:down"><span data-t="pw_h_down">See who’s DOWN for you!</span></span><span data-show="intent:date"><span data-t="pw_h_date">See who wants a DATE!</span></span></h1>
+    <ul class="pw-ben" id="pwBen">
+      <li data-k="vip"><i><svg viewBox="0 0 24 24"><path d="M4 19h16M4.5 15.5L3 7l5 4 4-6 4 6 5-4-1.5 8.5z"/></svg></i><span data-t="b_vip">Get VIP treatment</span></li>
+      <li data-k="unl"><i><svg viewBox="0 0 24 24"><path d="M7 8.5C5 8.5 3.5 10 3.5 12S5 15.5 7 15.5c3.5 0 6.5-7 10-7 2 0 3.5 1.5 3.5 3.5S19 15.5 17 15.5c-3.5 0-6.5-7-10-7z"/></svg></i><span data-t="b_unl">Unlimited profiles, every day.</span></li>
+      <li data-k="flirt"><i><svg viewBox="0 0 24 24"><path d="M12 3.5c-5 0-8.5 3.4-8.5 7.6 0 2.2 1 4.2 2.8 5.6L5.6 20l3.6-1.9c.9.3 1.8.4 2.8.4 5 0 8.5-3.4 8.5-7.5S17 3.5 12 3.5z"/></svg></i><span data-t="b_flirt">Unlock flirt messages!</span></li>
+      <li data-k="world"><i><svg viewBox="0 0 24 24"><path d="M3 13.5l7.5-2.5L13 3.5c.4-1 2-1 2.2.2L15 11l5 2.5v2L14.5 14l-1 5 2 1.5v1.5L12 21l-3.5 1v-1.5l2-1.5-.5-5-5 1.5z"/></svg></i><span data-t="b_world">Date around the world!</span></li>
+    </ul>
+    <div class="pw-plans">
+      <button class="pw-p" data-pick="plan:wk"><svg class="pw-ck" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><small data-t="pl_low">Low commitment</small><b data-t="pl_wk">1 WEEK</b><span class="pw-pr" data-t="pl_wk_p">$12.99/wk</span></button>
+      <button class="pw-p" data-pick="plan:q"><svg class="pw-ck" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><small data-t="pl_best">Best value</small><b data-t="pl_q">3 MONTHS</b><span class="pw-pr" data-t="pl_q_p">$2.31/wk</span><em class="pw-save" data-t="pl_save">Save 82%</em></button>
+      <button class="pw-p" data-pick="plan:mo"><svg class="pw-ck" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><small data-t="pl_flex">Month to month</small><b data-t="pl_mo">1 MONTH</b><span class="pw-pr" data-t="pl_mo_p">$4.61/wk</span></button>
+    </div>
+    <p class="pw-bill"><span data-show="plan:q"><span data-t="bill_q">Billed $29.99 every 3 months. 82% less than weekly.</span></span><span data-show="plan:mo"><span data-t="bill_mo">Billed $19.99 every month. 64% less than weekly.</span></span><span data-show="plan:wk"><span data-t="bill_wk">Billed $12.99 every week.</span></span></p>
+    <button class="s-cta"><span data-t="cont">Continue</span></button>
+    <p class="pw-proof"><b>★ 4.3</b> · <span data-t="pw_rat">130K ratings</span> · <span data-t="pw_proof">everyone photo-verified</span></p>
+    <p class="pw-legal" data-t="pw_legal">Recurring billing. Cancel any time.</p>
+  </div>
+</section>
+
+<section class="scr sheet o-sheet" data-id="offer">
+  <div class="o-panel">
+    <span class="o-grab"></span>
+    <button class="o-x" data-back aria-label="Close">✕</button>
+    <img class="o-fire" src="assets/brand/icon-down.svg" alt="">
+    <p class="o-k" data-t="o_k">Not ready for VIP?</p>
+    <h2 class="o-h" data-t="o_h">Get seen by more people nearby this week</h2>
+    <p class="d-sub" data-t="o_sub">A Profile Boost puts your profile in front of more people near you for a week.</p>
+    <div class="o-price"><span>1 Week Profile Boost</span><b data-t="o_p">$4.99</b></div>
+    <button class="s-cta"><span data-t="o_cta">Boost my profile</span></button>
+    <button class="o-no" data-back><span data-t="o_no">No thanks</span></button>
+  </div>
+</section>
+
+<!-- TODAY: the paywall shown on downapp.com (img/lr-media/lr-img-6.png), rebuilt word for word — aside: stills only -->
+<section class="scr" data-id="today" data-aside>
+  <div class="pw-glow"></div>
+  <div class="s-pad pw-pad">
+    <h1 class="pw-h" style="max-width:230px">See who liked you!</h1>
+    <ul class="pw-ben">
+      <li><i><svg viewBox="0 0 24 24"><path d="M4 19h16M4.5 15.5L3 7l5 4 4-6 4 6 5-4-1.5 8.5z"/></svg></i><span>Get VIP treatment</span></li>
+      <li><i><svg viewBox="0 0 24 24"><path d="M7 8.5C5 8.5 3.5 10 3.5 12S5 15.5 7 15.5c3.5 0 6.5-7 10-7 2 0 3.5 1.5 3.5 3.5S19 15.5 17 15.5c-3.5 0-6.5-7-10-7z"/></svg></i><span>Unlimited profiles, every day.</span></li>
+      <li><i><svg viewBox="0 0 24 24"><path d="M12 3.5c-5 0-8.5 3.4-8.5 7.6 0 2.2 1 4.2 2.8 5.6L5.6 20l3.6-1.9c.9.3 1.8.4 2.8.4 5 0 8.5-3.4 8.5-7.5S17 3.5 12 3.5z"/></svg></i><span>Unlock flirt messages!</span></li>
+      <li class="pw-dim"><i><svg viewBox="0 0 24 24"><path d="M3 13.5l7.5-2.5L13 3.5c.4-1 2-1 2.2.2L15 11l5 2.5v2L14.5 14l-1 5 2 1.5v1.5L12 21l-3.5 1v-1.5l2-1.5-.5-5-5 1.5z"/></svg></i><span>Date around the world!</span></li>
+    </ul>
+    <div class="t-plans">
+      <div class="t-p on"><svg class="pw-ck" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><small>Best value</small><b>12 MONTH</b><div class="t-row"><span>$7.99/mo<s>11.99</s></span><span class="pw-save">Save 30%</span></div></div>
+      <div class="t-p"><small>Low commitment</small><b>1 WEEK</b><div class="t-row"><span>$19.99/wk</span></div></div>
+    </div>
+    <p class="pw-bill">Billed Quarterly $29.99/3mo</p>
+    <button class="s-cta">Continue</button>
+    <p class="pw-legal">Recurring billing. Cancel any time.</p>
+  </div>
+</section>
+<!-- SCREENS:END -->
+
+      </div></div>
+      <div class="au-pn" id="panel" aria-live="polite"></div>
+    </div>
+    <p class="au-hint">Pick GET DATE on screen 2 and watch the picks, likes and paywall change. Close the paywall with ✕ to see idea 5.</p>
+    <!-- shown when CONTENT.liveUrl is set: assets/qr-app.png = qr.swift "<liveUrl>?app" -->
+    <div class="au-qr" id="qrCard" hidden><img src="assets/qr-app.png" alt="QR code that opens the prototype full screen"><div><b>Try it on your phone</b><p>Scan to open the prototype full screen, the way a new user would see it.</p></div></div>
+    <div class="au-mobw" id="qrMob" hidden><a class="au-btn" href="?app">Open it full screen</a></div>
+  </div>
+</section>
+
+<!-- the paywall TODAY vs PROPOSED — built from CONTENT.compare (stills: assets/hero/<today>.png, <proposed>.png) -->
+<section class="au-sec" id="compare" hidden><div class="au-wrap" id="cmpBody"></div></section>
+
+<footer class="au-foot" id="sources">
+  <div class="au-wrap">
+    <details id="srcDetails">
+      <summary>Where the numbers come from</summary>
+      <div class="au-srcs" id="srcBody"></div>
+    </details>
+    <p class="au-fine" id="fine"></p>
+    <div class="au-cta-line">
+      <p>Every screen here can be built and A/B tested in Adapty’s Flow Builder, with no app release.</p>
+      <a class="au-btn" href="https://adapty.io/flow-paywall-builder/" target="_blank" rel="noopener">About Flow Builder</a>
+    </div>
+  </div>
+</footer>
+
+<!-- extras: video dialog (CONTENT.video), ?app bar, ?tour overlay (CONTENT.tour) -->
+<dialog class="au-vid" id="vid" aria-label="Walkthrough video">
+  <div class="au-vid-in"><video id="vidEl" controls muted playsinline preload="none"></video></div>
+  <div class="au-vid-bar"><a id="vidDl" download>Download the MP4</a><button type="button" class="au-vid-x" id="vidX">Close</button></div>
+</dialog>
+<div class="au-scrim" id="abScrim"></div>
+<div class="au-appbar" id="appbar">
+  <button type="button" class="au-ab-why" id="abWhy"><i></i><span id="abT"></span><em>Why ↑</em></button>
+  <div class="au-lsw" id="abLang" role="group" aria-label="Language"></div>
+</div>
+<div class="au-tour" aria-hidden="true">
+  <div class="au-tb"><img src="assets/brand/appstore-icon.jpg" alt="">Growth Audit <small>· DOWN</small></div>
+  <div class="au-tby">Prepared by Adapty</div>
+  <div class="au-tcap" id="tCap"></div>
+  <div class="au-ttap" id="tTap"></div>
+  <div class="au-tprog"><i id="tProg"></i></div>
+  <div class="au-tintro" id="tIntro"></div>
+  <div class="au-tend" id="tEnd"></div>
+</div>
+
+<!-- CONTENT — all the audit's words and numbers, as data. Schema (brand-check enforces it):
+     ideas  : 3–5 rows, ranked (the audit is five ideas, never fifteen). screen = the screen that shows it.
+     panel  : one entry per screen. idea = its number in ideas (1-based) or 0 for a context screen.
+              why on an idea screen reads "<b>Try</b> X, <b>because</b> Y." in ≤ 45 words; iv = its range.
+              why on a context screen is one line saying what it sets up.
+     hero   : three screen ids shown as stills in the hero — run hero-stills.sh after the screens are done.
+     outcome: combined "up to" numbers, PS-deck style, never above the ceiling of the per-idea ranges.
+     sources: public facts only — App Store, their site, their screens. No sales research on this page.
+     EXTRAS (each one hides itself when left empty):
+     langs  : [{"code":"en","name":"English"},{"code":"es","name":"Español · Spain prices"}] — first = the markup's language
+     i18n   : {"es": {"<data-t key>": "text with {tokens}"}} — every data-t key, for every language after the first
+     prices : {"es": {"yr": "39,99 €", …}} — {tokens} in i18n strings; that storefront's real IAP prices
+     labelsI18n: {"es": {"goal": {"a": "…"}}} — C.labels per language (data-bind="label:…")
+     liveUrl: final Pages URL (QR card + video end card); the QR file encodes liveUrl + "?app"
+     video / poster: "assets/walkthrough.mp4" / "assets/walkthrough-poster.jpg" (record-video.sh)
+     compare: {today, proposed, kicker, title, sub, todayCap, rows:[{h, idea, was, now}], kept} — today = a data-aside screen
+     tour   : {segments:[{id, d, st, tap:[selector-in-screen, ms], pop, reveal, end}], captions:{id:{n|k, t, l, o, ol}},
+              introLede, endTitle} — ~30 s total; the last segment has end:true (the end card) -->
+<script type="application/json" id="content">
+{
+ "app": "DOWN",
+ "state": {
+  "intent": "down",
+  "hl": "funny",
+  "plan": "q",
+  "ver": "0"
+ },
+ "labels": {
+  "intent": {
+   "down": "casual fun",
+   "date": "something serious"
+  },
+  "hl": {
+   "funny": "Funny",
+   "ambitious": "Ambitious",
+   "smart": "Wicked Smart",
+   "sapio": "Sapiosexual"
+  }
+ },
+ "chips": {
+  "welcome": "Welcome",
+  "intent": "Looking for",
+  "highlight": "Highlight",
+  "verify": "Verify",
+  "picks": "Picks",
+  "likes": "Likes",
+  "paywall": "Paywall",
+  "offer": "On close"
+ },
+ "hero": [
+  "likes",
+  "paywall",
+  "picks"
+ ],
+ "outcome": {
+  "cr": "+25%",
+  "arpu": "+15%"
+ },
+ "ideas": [
+  {
+   "screen": "likes",
+   "title": "Say their answer back to them",
+   "what": "DOWN already asks the best question in dating: <code>GET DOWN</code> or <code>GET DATE</code>. Today the paywall says “See who liked you!” to both. Name the answer and their highlight on the likes count, the first picks and the paywall headline.",
+   "impact": "+10–20%",
+   "il": "CR to purchase"
+  },
+  {
+   "screen": "picks",
+   "title": "Let them tap DOWN once before you ask",
+   "what": "Open on picks that match the answer and let the first Down or Date lead to the likes they already have. VIP then arrives right after a real moment in the app, not as a wall in front of it.",
+   "impact": "+5–12%",
+   "il": "CR to purchase"
+  },
+  {
+   "screen": "paywall",
+   "title": "Make the 3-month saving impossible to miss",
+   "what": "The plan card on your site reads 12 MONTH at $7.99/mo, then bills $29.99 every 3 months. Use your App Store prices instead: $29.99 for 3 months is $2.31 a week, 82% less than $12.99 weekly. Pick it by default.",
+   "impact": "+8–15%",
+   "il": "ARPU"
+  },
+  {
+   "screen": "verify",
+   "title": "Turn the selfie check into proof",
+   "what": "Every DOWN user is photo-verified, which most casual apps can’t say. Say it on the selfie step, next to 4.3★ from 130K ratings, and again under the paywall button, where people decide.",
+   "impact": "+3–8%",
+   "il": "CR to purchase"
+  },
+  {
+   "screen": "offer",
+   "title": "Catch the people who close the paywall",
+   "what": "Closing VIP ends the moment today. Offer the 1 Week Profile Boost at $4.99 instead: a product you already sell, a smaller yes, and no discount on VIP.",
+   "impact": "+3–6%",
+   "il": "CR to purchase, from people who close"
+  }
+ ],
+ "panel": {
+  "welcome": {
+   "idea": 0,
+   "t": "Your opener, kept",
+   "why": "Your App Store line and art, word for word. It sets the tone the rest of the flow pays off."
+  },
+  "intent": {
+   "idea": 0,
+   "t": "GET DOWN or GET DATE",
+   "why": "The one question DOWN already asks. Every screen after this one uses the answer."
+  },
+  "highlight": {
+   "idea": 0,
+   "t": "Your highlight quiz",
+   "why": "Your own quiz, word for word. The highlight they pick comes back on the likes screen."
+  },
+  "verify": {
+   "idea": 4,
+   "t": "Turn the selfie check into proof",
+   "why": "<b>Try</b> telling people on the selfie step that everyone they’ll meet passed the same check, next to 4.3★ from 130K ratings, <b>because</b> safety is the first doubt in casual dating and this step is where people quit.",
+   "iv": "CR +3–8%",
+   "il": "to purchase",
+   "also": "The same proof line sits under the paywall button."
+  },
+  "picks": {
+   "idea": 2,
+   "t": "Let them tap DOWN once before you ask",
+   "why": "<b>Try</b> opening on picks that match their answer and letting the first Down or Date lead to their likes, <b>because</b> one real tap in the product makes VIP feel like the next step, not a toll.",
+   "iv": "CR +5–12%",
+   "il": "to purchase",
+   "also": "Pick GET DATE on screen 2 and a different first profile shows up."
+  },
+  "likes": {
+   "idea": 1,
+   "t": "Say their answer back to them",
+   "why": "<b>Try</b> naming what they picked (casual fun or something serious) and their highlight on the likes count, then in the paywall headline, <b>because</b> people buy faster when the offer repeats what they just told you.",
+   "iv": "CR +10–20%",
+   "il": "to purchase",
+   "also": "Use the real like count. With zero likes, lead with the picks instead."
+  },
+  "paywall": {
+   "idea": 3,
+   "t": "Make the 3-month saving impossible to miss",
+   "why": "<b>Try</b> three cards from your own price list with 3 months picked and priced per week ($2.31 against $12.99), <b>because</b> today’s card says 12 MONTH but bills $29.99 per quarter, and maths that doesn’t add up stalls the tap.",
+   "iv": "ARPU +8–15%",
+   "il": "more people on the 3-month plan",
+   "also": "The headline is idea 1, the proof line under the button is idea 4."
+  },
+  "offer": {
+   "idea": 5,
+   "t": "Catch the people who close the paywall",
+   "why": "<b>Try</b> offering the 1 Week Profile Boost ($4.99) when someone closes VIP, <b>because</b> a small one-week buy turns a no into a first purchase without discounting VIP.",
+   "iv": "CR +3–6%",
+   "il": "to purchase, from people who close"
+  },
+  "today": {
+   "idea": 0,
+   "t": "Your paywall today",
+   "why": "Rebuilt word for word from the paywall shown on downapp.com."
+  }
+ },
+ "langs": [
+  {
+   "code": "en",
+   "name": "English"
+  },
+  {
+   "code": "es",
+   "name": "Español · US prices"
+  }
+ ],
+ "i18n": {
+  "es": {
+   "w_h": "¿Con sed de algo un poco diferente?",
+   "w_sub": "Más de 19 millones de solteros de mente abierta, explorando y siendo auténticos.",
+   "w_apple": "Regístrate con Apple",
+   "w_phone": "Usar número de celular",
+   "w_fine": "Al registrarte aceptas nuestros Términos y la Política de privacidad.",
+   "i_h": "¿Qué estás buscando?",
+   "i_sub": "Sé directo y liga de forma honesta. Puedes cambiarlo cuando quieras.",
+   "i_down": "Diversión casual",
+   "i_date": "Algo más serio",
+   "i_note": "Solo le decimos a alguien que te gusta si tú también le gustas.",
+   "skip": "Omitir",
+   "h_h": "¿Cuál es tu punto fuerte?",
+   "h_sub": "Cuéntales a tus matches qué te hace destacar y por qué eres un buen partido.",
+   "h_card": "Mi punto fuerte",
+   "cont": "Continuar",
+   "v_h": "Demuéstranos que eres tú",
+   "v_sub": "Tómate una selfie rápida. En DOWN todos están verificados con foto desde el principio.",
+   "v_p1": "Todas las personas que verás pasaron esta misma verificación",
+   "v_p2": "4.3 en la App Store, con 130 mil valoraciones",
+   "v_p3": "Más de 19 millones de solteros de mente abierta",
+   "v_cta": "Tomar una selfie",
+   "p_near": "Cerca",
+   "p_tip_h": "Tus primeros perfiles, según tu respuesta",
+   "p_tip": "Toca Down o Date. Solo se lo decimos si tú también le gustas.",
+   "t_vis": "Visitas",
+   "l_k": "Visitas",
+   "l_h1": "personas que buscan",
+   "l_h2": "ya te dieron like",
+   "l_sub": "Vieron tu punto fuerte",
+   "l_sub2": ". Devuélveles el like y es un match.",
+   "l_tag": "Le gustas",
+   "l_cta": "Ver a quién le gustas",
+   "pw_h_down": "¡Mira quién está DOWN para ti!",
+   "pw_h_date": "¡Mira quién quiere una DATE!",
+   "b_vip": "Recibe trato VIP",
+   "b_unl": "Perfiles ilimitados, todos los días.",
+   "b_flirt": "¡Desbloquea los mensajes de flirteo!",
+   "b_world": "¡Liga por todo el mundo!",
+   "pl_low": "Poco compromiso",
+   "pl_best": "Mejor valor",
+   "pl_flex": "Mes a mes",
+   "pl_wk": "1 SEMANA",
+   "pl_q": "3 MESES",
+   "pl_mo": "1 MES",
+   "pl_wk_p": "{wk}/sem",
+   "pl_q_p": "{qwk}/sem",
+   "pl_mo_p": "{mowk}/sem",
+   "pl_save": "Ahorra 82%",
+   "bill_q": "{q} cada 3 meses. Un 82% menos que semanal.",
+   "bill_mo": "{mo} cada mes. Un 64% menos que semanal.",
+   "bill_wk": "{wk} cada semana.",
+   "pw_rat": "130 mil valoraciones",
+   "pw_proof": "todos verificados con foto",
+   "pw_legal": "Pago recurrente. Cancela cuando quieras.",
+   "o_k": "¿Aún no te convence VIP?",
+   "o_h": "Que más gente cerca te vea esta semana",
+   "o_sub": "Un Profile Boost pone tu perfil frente a más personas cerca de ti durante una semana.",
+   "o_p": "{boost}",
+   "o_cta": "Impulsar mi perfil",
+   "o_no": "No, gracias"
+  }
+ },
+ "prices": {
+  "es": {
+   "wk": "$12.99",
+   "mo": "$19.99",
+   "q": "$29.99",
+   "qwk": "$2.31",
+   "mowk": "$4.61",
+   "boost": "$4.99"
+  }
+ },
+ "labelsI18n": {
+  "es": {
+   "intent": {
+    "down": "algo casual",
+    "date": "algo serio"
+   }
+  }
+ },
+ "liveUrl": "https://eddieatadapty.github.io/down-flow-rebuild/",
+ "video": "assets/walkthrough.mp4",
+ "poster": "assets/walkthrough-poster.jpg",
+ "compare": {
+  "today": "today",
+  "proposed": "paywall",
+  "kicker": "The paywall, side by side",
+  "title": "Today and proposed.",
+  "sub": "Same screen, five changes.",
+  "todayCap": "rebuilt from the paywall shown on downapp.com",
+  "rows": [
+   {
+    "h": "Headline",
+    "idea": 1,
+    "was": "See who liked you!",
+    "now": "See who’s DOWN for you! or See who wants a DATE!, from their answer"
+   },
+   {
+    "h": "Benefits",
+    "idea": 1,
+    "was": "The same order for everyone",
+    "now": "Flirt messages first for GET DOWN, unlimited profiles first for GET DATE"
+   },
+   {
+    "h": "Plans",
+    "idea": 3,
+    "was": "12 MONTH at $7.99/mo, billed $29.99/3mo · 1 WEEK at $19.99/wk",
+    "now": "1 week $12.99 · 3 months $29.99 ($2.31/wk, picked) · 1 month $19.99, all from your App Store list"
+   },
+   {
+    "h": "Proof",
+    "idea": 4,
+    "was": "Nothing on the screen",
+    "now": "★ 4.3 · 130K ratings · everyone photo-verified, under the button"
+   },
+   {
+    "h": "On close",
+    "idea": 5,
+    "was": "Not shown",
+    "now": "1 Week Profile Boost, $4.99"
+   }
+  ],
+  "kept": "Kept: the gradient, the four benefits word for word, the card style, the pink Continue button and the billing line."
+ },
+ "tour": {
+  "segments": [
+   {
+    "id": "welcome",
+    "d": 3200,
+    "tap": [
+     ".s-cta",
+     2600
+    ]
+   },
+   {
+    "id": "intent",
+    "d": 2300,
+    "tap": [
+     "[data-pick=\"intent:down\"]",
+     1500
+    ]
+   },
+   {
+    "id": "intent",
+    "d": 900,
+    "st": {
+     "intent": "down"
+    }
+   },
+   {
+    "id": "highlight",
+    "d": 2100,
+    "st": {
+     "hl": "ambitious"
+    },
+    "tap": [
+     "[data-pick=\"hl:funny\"]",
+     1300
+    ]
+   },
+   {
+    "id": "highlight",
+    "d": 1400,
+    "st": {
+     "hl": "funny"
+    },
+    "tap": [
+     ".s-cta",
+     950
+    ]
+   },
+   {
+    "id": "verify",
+    "d": 2600,
+    "st": {
+     "ver": "0"
+    },
+    "tap": [
+     ".v-shoot",
+     2000
+    ]
+   },
+   {
+    "id": "verify",
+    "d": 2000,
+    "st": {
+     "ver": "1"
+    },
+    "pop": ".v-ok",
+    "tap": [
+     ".v-go",
+     1550
+    ]
+   },
+   {
+    "id": "picks",
+    "d": 2900,
+    "tap": [
+     ".p-down",
+     2300
+    ]
+   },
+   {
+    "id": "likes",
+    "d": 3100,
+    "pop": ".l-n",
+    "reveal": ".l-grid",
+    "tap": [
+     ".s-cta",
+     2550
+    ]
+   },
+   {
+    "id": "paywall",
+    "d": 3200,
+    "pop": ".pw-save",
+    "tap": [
+     ".s-x",
+     2650
+    ]
+   },
+   {
+    "id": "offer",
+    "d": 2800,
+    "pop": ".o-fire"
+   },
+   {
+    "id": "offer",
+    "d": 3000,
+    "end": true
+   }
+  ],
+  "captions": {
+   "welcome": {
+    "k": "Context",
+    "t": "Your opener, kept",
+    "l": "Your App Store line and art, word for word."
+   },
+   "intent": {
+    "k": "Context",
+    "t": "GET DOWN or GET DATE",
+    "l": "The one answer every screen after this uses."
+   },
+   "highlight": {
+    "k": "Context",
+    "t": "Your highlight quiz",
+    "l": "Their pick comes back on the likes screen."
+   },
+   "verify": {
+    "n": 4,
+    "t": "Turn the selfie into proof",
+    "l": "Everyone here passed the same check. 4.3★, 130K ratings.",
+    "o": "+3–8%",
+    "ol": "CR to purchase"
+   },
+   "picks": {
+    "n": 2,
+    "t": "One DOWN before you ask",
+    "l": "Picks that match their answer, then their likes.",
+    "o": "+5–12%",
+    "ol": "CR to purchase"
+   },
+   "likes": {
+    "n": 1,
+    "t": "Say their answer back",
+    "l": "“3 people looking for casual fun already liked you.”",
+    "o": "+10–20%",
+    "ol": "CR to purchase"
+   },
+   "paywall": {
+    "n": 3,
+    "t": "Make the saving obvious",
+    "l": "3 months at $2.31 a week, 82% less than weekly.",
+    "o": "+8–15%",
+    "ol": "ARPU"
+   },
+   "offer": {
+    "n": 5,
+    "t": "Catch the people who close",
+    "l": "A $4.99 Profile Boost instead of a lost sale.",
+    "o": "+3–6%",
+    "ol": "CR to purchase"
+   }
+  },
+  "introLede": "Five ideas to turn more DOWN singles into VIP members.",
+  "endTitle": "Five ideas, built into your own onboarding."
+ },
+ "grounding": "Impact ranges are Adapty’s expected effect from teardowns and A/B tests across 30,000+ subscription apps, not measured lift for DOWN. They overlap, so they don’t add up.",
+ "sources": [
+  {
+   "group": "Prices",
+   "items": [
+    {
+     "dt": "$12.99 · 1 week",
+     "dd": "“Down VIP, 1 Week”, In-App Purchases on the <a href=\"https://apps.apple.com/us/app/down-the-casual-dating-app/id601174087\" target=\"_blank\" rel=\"noopener\">US App Store listing</a>"
+    },
+    {
+     "dt": "$19.99 · 1 month",
+     "dd": "“1mo VIP on DOWN Dating App”, same list"
+    },
+    {
+     "dt": "$29.99 · 3 months",
+     "dd": "“3mo Upgraded Dating & Matches”, same list"
+    },
+    {
+     "dt": "$4.99 · 1 Week Profile Boost",
+     "dd": "Same list, the lowest of three boost prices"
+    },
+    {
+     "dt": "Per-week maths",
+     "dd": "$29.99 × 4 ÷ 52 = $2.31 · $19.99 × 12 ÷ 52 = $4.61 · 82% = 1 − 2.31 ÷ 12.99 · 64% = 1 − 4.61 ÷ 12.99"
+    },
+    {
+     "dt": "Not used",
+     "dd": "$24.99 Down VIP, 1 Week · $35.99 3mo VIP Wild Dating & Hookup · $39.99 VIP Wild Dating & Hookup · $19.99 Down VIP (period not listed) · $6.99 and $9.99 1 Week Profile Boost. Several SKUs share a name at different prices, so we used the lowest of each. Also not used: $7.99/mo, $11.99 and $19.99/wk on the site’s paywall image, which aren’t in the App Store list."
+    }
+   ]
+  },
+  {
+   "group": "Proof",
+   "items": [
+    {
+     "dt": "4.3★ · 130K ratings",
+     "dd": "US App Store listing, October 2026 (4.32 from 130,361 ratings)"
+    },
+    {
+     "dt": "19+ million singles",
+     "dd": "App Store description"
+    },
+    {
+     "dt": "Everyone photo-verified",
+     "dd": "App Store description: “all users must now be photo-verified”"
+    }
+   ]
+  },
+  {
+   "group": "Features and copy",
+   "items": [
+    {
+     "dt": "GET DOWN / GET DATE",
+     "dd": "App Store description"
+    },
+    {
+     "dt": "“Thirsty for something a little different?”",
+     "dd": "App Store screenshot 1"
+    },
+    {
+     "dt": "“What is your highlight?” and the stickers",
+     "dd": "In-app mockup on downapp.com"
+    },
+    {
+     "dt": "Picks · Visitors · Chats, Date · Flirt · Down, Nearby · Group Play · Hot",
+     "dd": "In-app mockups on downapp.com"
+    },
+    {
+     "dt": "“See who liked you!”, the four benefits, “Recurring billing. Cancel any time.”",
+     "dd": "The paywall mockup on downapp.com, used for “today”"
+    },
+    {
+     "dt": "“We only tell people you like them if they like you too”",
+     "dd": "Paraphrased from the App Store description"
+    }
+   ]
+  },
+  {
+   "group": "Design",
+   "items": [
+    {
+     "dt": "Colours",
+     "dd": "Sampled off the in-app mockups on downapp.com (navy #0f1839, cards #2b2f54, pink #ff0099, paywall gradient)"
+    },
+    {
+     "dt": "Type",
+     "dd": "Geist, the family downapp.com uses, from Google Fonts"
+    },
+    {
+     "dt": "Wordmark, heart and fire icons, profile cards",
+     "dd": "downapp.com’s own SVGs and images"
+    },
+    {
+     "dt": "Art",
+     "dd": "Welcome art cropped from App Store screenshot 1; highlight stickers cut from the site’s quiz mockup; the likes cards are site profile cards, blurred on purpose"
+    }
+   ]
+  },
+  {
+   "group": "What we couldn’t see",
+   "items": [
+    {
+     "dt": "Your live onboarding",
+     "dd": "DOWN isn’t in the screen-recording library we use, so the order and any copy beyond your listing and site are our reconstruction"
+    },
+    {
+     "dt": "Your live paywall",
+     "dd": "“Today” is rebuilt from the image on your site and may differ from what ships"
+    },
+    {
+     "dt": "A free trial",
+     "dd": "We didn’t see one, so we didn’t add one"
+    },
+    {
+     "dt": "The Profile Boost",
+     "dd": "Whether it renews, and exactly what it does in Picks"
+    },
+    {
+     "dt": "The Spanish copy",
+     "dd": "Our translation, not yours, with US prices"
+    }
+   ]
+  }
+ ]
+}
+</script>
+
+<script>
+/* DOWN hooks: the big highlight card follows the pick; the paywall's benefits reorder by GET DOWN / GET DATE;
+   the selfie step starts fresh each time it is entered (hero stills show it done). */
+var HL_ART = {funny: 'assets/crop/hl-funny.png', ambitious: 'assets/crop/hl-ambitious.png', smart: 'assets/crop/hl-smart.png', sapio: 'assets/crop/hl-sapio.png'};
+var BEN_ORDER = {down: ['flirt', 'vip', 'unl', 'world'], date: ['unl', 'vip', 'flirt', 'world']};
+window.onSync = function(S){
+  var b = document.getElementById('hlBig'); if (b) b.src = HL_ART[S.hl] || HL_ART.funny;
+  var ul = document.getElementById('pwBen');
+  if (ul) (BEN_ORDER[S.intent] || BEN_ORDER.down).forEach(function(k){ var li = ul.querySelector('[data-k="' + k + '"]'); if (li) ul.appendChild(li); });
+};
+window.onEnter = function(id, S){ if (id === 'verify' && !SHOT) { S.ver = '0'; sync(); } if (id === 'verify' && HERO) { S.ver = '1'; sync(); } };
+</script>
+<script>
+/* ============ engine — generic, do not fork per app ============ */
+var C = JSON.parse(document.getElementById('content').textContent);
+var S = C.state, scr = {}, ORDER = [], hist = [], cur = null, Q = location.search;
+var SHOT = /[?&](shot|phone|tour)\b/.test(Q), HERO = /[?&]hero\b/.test(Q);
+/* a screen with data-aside (e.g. the paywall TODAY for the side-by-side) renders for stills but is not part of the flow */
+document.querySelectorAll('.scr').forEach(function(s){ scr[s.dataset.id] = s; if (!s.hasAttribute('data-aside')) ORDER.push(s.dataset.id); });
+if (/[?&]shot\b/.test(Q)) document.documentElement.classList.add('shot');
+if (/[?&]phone\b/.test(Q)) document.documentElement.classList.add('shot', 'phoneonly');
+if (/[?&]clear\b/.test(Q)) document.documentElement.classList.add('clear');
+var IDEAS = (C.ideas || []).length;
+
+/* ---- languages: markup is the first language; C.i18n[lang][data-t key] the others; {tokens} from C.prices[lang] ---- */
+var LANGS = C.langs || [], BASE = LANGS.length ? LANGS[0].code : 'en', LANG_DONE = BASE, BASE_LABELS = JSON.parse(JSON.stringify(C.labels || {}));
+if (!S.lang) S.lang = BASE;
+function fillP(s, l){ var P = (C.prices || {})[l] || {}; return String(s).replace(/\{(\w+)\}/g, function(m, k){ return k in P ? P[k] : m; }); }
+function applyLang(){
+  var l = S.lang || BASE; if (l === LANG_DONE) return;
+  var T = (C.i18n || {})[l] || {};
+  document.querySelectorAll('.phone [data-t]').forEach(function(el){
+    if (el._base == null) el._base = el.innerHTML;
+    el.innerHTML = l === BASE || T[el.dataset.t] == null ? el._base : fillP(T[el.dataset.t], l);
+  });
+  C.labels = JSON.parse(JSON.stringify(BASE_LABELS));
+  var LL = (C.labelsI18n || {})[l] || {}; Object.keys(LL).forEach(function(k){ C.labels[k] = LL[k]; });
+  LANG_DONE = l;
+}
+function setLang(l){
+  if (!LANGS.some(function(x){ return x.code === l; })) return;
+  S.lang = l; sync();
+  document.querySelectorAll('[data-setlang]').forEach(function(b){ b.classList.toggle('on', b.dataset.setlang === l); });
+  if (window.onLang) window.onLang(l);
+}
+
+function lab(key){ var v = S[key]; var L = C.labels[key]; if (Array.isArray(v)) return v.map(function(x){ return L && L[x] || x; }).join(', '); return (L && L[v]) || v; }
+function sync(){
+  applyLang();
+  document.querySelectorAll('[data-bind]').forEach(function(el){
+    var b = el.dataset.bind, m = b.split(':');
+    el.textContent = m[0] === 'label' ? lab(m[1]) : m[0] === 'count' ? (S[m[1]] || []).length : (S[b] == null ? '' : S[b]);
+  });
+  document.querySelectorAll('[data-pick]').forEach(function(el){ var p = el.dataset.pick.split(':'); el.classList.toggle('on', S[p[0]] === p[1]); });
+  document.querySelectorAll('[data-toggle]').forEach(function(el){ var p = el.dataset.toggle.split(':'); el.classList.toggle('on', (S[p[0]] || []).indexOf(p[1]) > -1); });
+  document.querySelectorAll('[data-requires]').forEach(function(el){ el.disabled = !(S[el.dataset.requires] || []).length; });
+  document.querySelectorAll('[data-show]').forEach(function(el){ var p = el.dataset.show.split(':'); el.style.display = String(S[p[0]]) === p[1] ? '' : 'none'; });
+  if (window.onSync) window.onSync(S);
+}
+function show(id, dir){
+  var from = scr[cur], to = scr[id]; if (!to || id === cur) return;
+  var sheet = to.classList.contains('sheet');
+  if (from){
+    from.classList.remove('is-active');
+    if (sheet) from.classList.add('under');                                   /* a sheet slides up over the screen that opened it */
+    else if (dir === 'fwd' && !from.classList.contains('sheet')) from.classList.add('is-past');
+  }
+  if (!sheet) Object.keys(scr).forEach(function(k){ var u = scr[k]; if (u !== to && u.classList.contains('under')) { u.classList.remove('under'); if (dir === 'fwd') u.classList.add('is-past'); } });
+  to.classList.remove('is-past', 'under'); to.classList.add('is-active'); cur = id;
+  paint(); if (window.onEnter) window.onEnter(id, S);
+}
+function go(id){ if (cur) hist.push(cur); show(id, 'fwd'); }
+function back(){ if (hist.length) { var p = hist.pop(); scr[cur].classList.remove('is-active'); show(p, 'back'); } }
+function jump(id){
+  Object.keys(scr).forEach(function(k){ scr[k].classList.add('nofx'); scr[k].classList.remove('is-active', 'is-past', 'under'); });
+  var i = ORDER.indexOf(id); hist = ORDER.slice(0, i < 0 ? 0 : i); cur = null;
+  ORDER.slice(0, i).forEach(function(k){ if (!scr[k].classList.contains('sheet')) scr[k].classList.add('is-past'); });
+  if (scr[id] && scr[id].classList.contains('sheet')) {                        /* jumping to a sheet: its opener stays visible under it */
+    for (var j = i - 1; j >= 0; j--) if (!scr[ORDER[j]].classList.contains('sheet')) { scr[ORDER[j]].classList.remove('is-past'); scr[ORDER[j]].classList.add('under'); break; }
+  }
+  show(id, 'jump');
+  requestAnimationFrame(function(){ requestAnimationFrame(function(){ Object.keys(scr).forEach(function(k){ scr[k].classList.remove('nofx'); }); }); });
+}
+function stepBy(d){ var i = ORDER.indexOf(cur) + d; if (i >= 0 && i < ORDER.length) jump(ORDER[i]); }
+function jumpTo(id){
+  var p = document.getElementById('prototype');
+  if (p && !document.documentElement.classList.contains('appmode')) p.scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start'});
+  jump(id);
+}
+function paint(){
+  sync();
+  var c = document.getElementById('chips');
+  if (!c.childElementCount) ORDER.forEach(function(id){
+    var p = C.panel[id] || {}, b = document.createElement('button');
+    b.className = 'au-chip'; b.type = 'button'; b.dataset.id = id; b.setAttribute('role', 'tab');
+    b.innerHTML = (p.idea ? '<i>' + p.idea + '</i>' : '') + ((C.chips && C.chips[id]) || id);
+    b.onclick = function(){ jump(id); };
+    c.appendChild(b);
+  });
+  c.querySelectorAll('.au-chip').forEach(function(b){ var on = b.dataset.id === cur; b.classList.toggle('on', on); b.setAttribute('aria-selected', on); });
+  var d = C.panel[cur] || {t: cur, why: ''}, n = ORDER.indexOf(cur) + 1;
+  document.getElementById('panel').innerHTML =
+    (d.idea ? '<div class="au-pn-k"><i></i>Idea ' + d.idea + ' of ' + IDEAS + '</div>' : '<div class="au-pn-k au-ctx"><i></i>Context</div>') +
+    '<h3 class="au-pn-t">' + d.t + '</h3><p class="au-pn-h">' + d.why + '</p>' +
+    (d.iv ? '<div class="au-pn-o"><div class="au-lab">Potential outcome · based on Adapty data</div><div class="au-val"><mark>' + d.iv + '</mark></div><div class="au-sub">' + (d.il || '') + '</div></div>' : '') +
+    (d.also ? '<p class="au-pn-a">' + d.also + '</p>' : '') +
+    '<div class="au-pn-nav"><button type="button" onclick="stepBy(-1)"' + (n <= 1 ? ' disabled' : '') + '>‹ Previous</button><span>Screen ' + n + ' of ' + ORDER.length + '</span><button type="button" onclick="stepBy(1)"' + (n === ORDER.length ? ' disabled' : '') + '>Next ›</button></div>';
+  var ab = document.getElementById('abT'); if (ab) ab.textContent = (d.idea ? 'Idea ' + d.idea + ' of ' + IDEAS + ' · ' : '') + (d.t || '');
+}
+document.addEventListener('click', function(e){
+  var j = e.target.closest('[data-jumpto]'); if (j){ e.preventDefault(); jumpTo(j.dataset.jumpto); return; }
+  var L = e.target.closest('[data-setlang]'); if (L){ setLang(L.dataset.setlang); return; }
+  if (e.target.closest('[data-langtoggle]') && LANGS.length > 1){ var k = LANGS.findIndex(function(x){ return x.code === S.lang; }); setLang(LANGS[(k + 1) % LANGS.length].code); return; }
+  var el = e.target.closest('[data-go],[data-back],[data-pick],[data-toggle]'); if (!el) return;
+  if (el.dataset.pick){ var p = el.dataset.pick.split(':'); S[p[0]] = p[1]; sync(); if (el.dataset.advance) setTimeout(function(){ go(el.dataset.advance); }, 170); return; }
+  if (el.dataset.toggle){ var q = el.dataset.toggle.split(':'), a = S[q[0]] = S[q[0]] || [], i = a.indexOf(q[1]); if (i > -1) a.splice(i, 1); else a.push(q[1]); sync(); return; }
+  if ('back' in el.dataset) return back();
+  go(el.dataset.go);
+});
+document.querySelectorAll('[data-input]').forEach(function(inp){
+  inp.value = S[inp.dataset.input] || ''; inp.addEventListener('input', function(){ S[inp.dataset.input] = inp.value.trim() || 'there'; sync(); });
+});
+function $(id){ return document.getElementById(id); }
+
+/* hero stills, shortlist, outcome, sources — from CONTENT */
+$('heroPhones').innerHTML = (C.hero || []).map(function(id, i){
+  var pos = ['l', 'c', 'r'][i] || 'r', t = (C.chips && C.chips[id]) || id;
+  return '<button class="au-hp au-' + pos + '" data-jumpto="' + id + '" aria-label="Open ' + t + '"><img src="assets/hero/' + id + '.png" alt=""></button>';
+}).join('');
+$('ideaList').innerHTML = (C.ideas || []).map(function(r, i){
+  return '<article class="au-idea"><div class="au-num">0' + (i + 1) + '</div><div><h3>' + r.title + '</h3><p>' + r.what + '</p>' +
+    '<button type="button" class="au-lnk" data-jumpto="' + r.screen + '">See it on the screen</button></div>' +
+    '<div class="au-imp"><div class="au-v"><mark>' + r.impact + '</mark></div><div class="au-l">' + r.il + '</div></div></article>';
+}).join('');
+var O = C.outcome || {};
+$('bandNums').innerHTML =
+  (O.cr ? '<div><small>up to</small><b>' + O.cr + '</b><span>CR to purchase</span></div>' : '') +
+  (O.arpu ? '<div><small>up to</small><b>' + O.arpu + '</b><span>ARPU</span></div>' : '');
+$('bandFn').textContent = C.grounding;
+$('fine').textContent = C.grounding + ' Prepared by Adapty.';
+$('srcBody').innerHTML = C.sources.map(function(g){
+  return '<div><h4>' + g.group + '</h4><dl>' + g.items.map(function(it){ return '<dt>' + it.dt + '</dt><dd>' + it.dd + '</dd>'; }).join('') + '</dl></div>';
+}).join('');
+function openSrc(){ var d = $('srcDetails'); d.open = true; d.scrollIntoView({block: 'start'}); }
+
+/* ---- extras: language control, the paywall side by side, QR / phone view, the video ---- */
+if (LANGS.length > 1) {
+  $('langRow').hidden = false;
+  var lb = LANGS.map(function(x){ return '<button type="button" data-setlang="' + x.code + '">' + x.name + '</button>'; }).join('');
+  $('langSw').innerHTML = lb;
+  $('abLang').innerHTML = LANGS.map(function(x){ return '<button type="button" data-setlang="' + x.code + '">' + x.code.toUpperCase() + '</button>'; }).join('');
+}
+var CM = C.compare;
+if (CM && scr[CM.today] && scr[CM.proposed]) {
+  $('compare').hidden = false; $('navCompare').hidden = false;
+  $('cmpBody').innerHTML = '<div class="au-ideas-h"><p class="au-kicker">' + (CM.kicker || 'The paywall, side by side') + '</p><h2 class="au-h2">' + (CM.title || 'Today and proposed.') + (CM.sub ? ' <span>' + CM.sub + '</span>' : '') + '</h2></div>' +
+    '<div class="au-cmp"><figure><img src="assets/hero/' + CM.today + '.png" alt="Your paywall today"><figcaption>Today <span>· ' + (CM.todayCap || 'rebuilt from your recording') + '</span></figcaption></figure>' +
+    '<ol class="au-chg">' + (CM.rows || []).map(function(r){
+      return '<li><h4>' + r.h + (r.idea ? ' <i>Idea ' + r.idea + '</i>' : '') + '</h4><span class="au-was"><em>Today</em>' + r.was + '</span><span class="au-now"><em>Proposed</em>' + r.now + '</span></li>';
+    }).join('') + '</ol>' +
+    '<figure><button type="button" class="au-cmp-go" data-jumpto="' + CM.proposed + '" aria-label="Open the proposed paywall"><img src="assets/hero/' + CM.proposed + '.png" alt="The proposed paywall"></button><figcaption>Proposed <span>· tap to try it</span></figcaption></figure></div>' +
+    (CM.kept ? '<p class="au-kept">' + CM.kept + '</p>' : '');
+}
+if (C.liveUrl) { $('qrCard').hidden = false; $('qrMob').hidden = false; }
+if (/[?&]app\b/.test(Q)) {
+  var H0 = document.documentElement; H0.classList.add('appmode');
+  var openP = function(o){ H0.classList.toggle('au-open', o); $('abWhy').querySelector('em').textContent = o ? 'Close ↓' : 'Why ↑'; };
+  $('abWhy').onclick = function(){ openP(!H0.classList.contains('au-open')); };
+  $('abScrim').onclick = function(){ openP(false); };
+}
+if (C.video) {
+  var dlg = $('vid'), vel = $('vidEl'); vel.src = C.video; if (C.poster) vel.poster = C.poster; $('vidDl').href = C.video;
+  $('heroVideo').hidden = false;
+  $('heroVideo').onclick = function(){ dlg.showModal(); vel.play().catch(function(){}); };
+  $('vidX').onclick = function(){ dlg.close(); };
+  dlg.addEventListener('close', function(){ vel.pause(); });
+  dlg.addEventListener('click', function(e){ if (e.target === dlg) dlg.close(); });
+}
+
+/* ---- ?tour: a deterministic walkthrough from C.tour — tourAt(ms) paints one frame; record-video.sh records it ---- */
+function tourInit(){
+  var T = C.tour, H = document.documentElement, TR = T.transition || 360;
+  H.classList.add('tourmode', 'shot'); document.body.classList.add('nofx');
+  var SEG = T.segments, START = [], STATE = [], UNDER = [], acc = 0, st = JSON.parse(JSON.stringify(C.state));
+  SEG.forEach(function(s, i){
+    START.push(acc); acc += s.d;
+    Object.keys(s.st || {}).forEach(function(k){ st[k] = s.st[k]; }); STATE.push(JSON.parse(JSON.stringify(st)));
+    var u = null; if (scr[s.id].classList.contains('sheet')) for (var j = i - 1; j >= 0; j--) if (!scr[SEG[j].id].classList.contains('sheet')) { u = SEG[j].id; break; }
+    UNDER.push(u);
+  });
+  var TOTAL = acc, capEl = $('tCap'), tap = $('tTap'), pressed = null, popped = [];
+  $('tIntro').innerHTML = '<p class="au-eyebrow"><i></i>' + document.querySelector('.au-top-hero .au-eyebrow').textContent + '</p><h1 class="au-display">' + C.app + '</h1>' +
+    '<p class="au-lede">' + (T.introLede || document.querySelector('.au-top-hero .au-lede').innerHTML) + '</p>';
+  $('tEnd').innerHTML = '<p class="au-eyebrow"><i></i>Growth Audit · ' + C.app + '</p><h2 class="au-te-h">' + (T.endTitle || 'Five ideas, built into your own onboarding.') + '</h2>' +
+    '<div class="au-te-n">' + (O.cr ? '<div><small>up to</small><b>' + O.cr + '</b><span>CR to purchase</span></div>' : '') + (O.arpu ? '<div><small>up to</small><b>' + O.arpu + '</b><span>ARPU</span></div>' : '') + '</div>' +
+    (C.liveUrl ? '<div class="au-te-q"><img src="assets/qr-app.png" alt=""><div><b>Try it on your phone</b><span>' + C.liveUrl.replace(/^https?:\/\//, '').replace(/\/$/, '') + '</span></div></div>' : '') +
+    '<p class="au-te-f">' + C.grounding + '</p>';
+  function ease(x){ return x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; }
+  function easeBack(x){ var c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); }
+  function capHTML(c){
+    c = c || {k: '', t: '', l: ''};
+    return '<div class="au-tk' + (c.n ? '' : ' au-ctx') + '"><i></i>' + (c.n ? 'Idea ' + c.n + ' of ' + IDEAS : (c.k || 'Context')) + '</div><h2 class="au-tt">' + c.t + '</h2><p class="au-tl">' + (c.l || '') + '</p>' +
+      (c.o ? '<div class="au-to"><small>Potential outcome · based on Adapty data</small><b><mark>' + c.o + '</mark></b><span>' + (c.ol || '') + '</span></div>' : '');
+  }
+  function place(id, tf, z){ scr[id].style.transform = tf; scr[id].style.zIndex = z; }
+  window.TOUR_MS = TOTAL;
+  window.tourAt = function(ms){
+    ms = Math.max(0, Math.min(TOTAL - 1, ms));
+    var i = 0; while (i < SEG.length - 1 && ms >= START[i + 1]) i++;
+    var s = SEG[i], local = ms - START[i], prev = i > 0 ? SEG[i - 1] : null;
+    Object.keys(STATE[i]).forEach(function(k){ S[k] = STATE[i][k]; }); sync();
+    var moving = prev && prev.id !== s.id && local < TR, p = moving ? ease(local / TR) : 1;
+    Object.keys(scr).forEach(function(k){ scr[k].classList.remove('is-active', 'is-past', 'under'); place(k, 'translateX(100%)', 0); });
+    var B = scr[s.id];
+    if (moving) {
+      if (B.classList.contains('sheet')) { place(prev.id, 'none', 1); B.style.transform = 'translateY(' + (1 - p) * 100 + '%)'; }
+      else {
+        var slide = 'translateX(' + (-28 * p) + '%)'; place(prev.id, slide, 1); B.style.transform = 'translateX(' + (1 - p) * 100 + '%)';
+        if (UNDER[i - 1]) place(UNDER[i - 1], slide, 0);
+      }
+    } else B.style.transform = 'none';
+    B.style.zIndex = 2;
+    if (UNDER[i] && !moving) place(UNDER[i], 'none', 1);
+    /* optional reveal: s.pop scales an element in, s.reveal fades one in a beat later */
+    popped.forEach(function(e){ e.style.transform = ''; e.style.opacity = ''; }); popped = [];
+    var q = Math.max(0, Math.min(1, (local - 250) / 550));
+    if (s.pop) { var pe = B.querySelector(s.pop); if (pe) { pe.style.transform = 'scale(' + (.55 + .45 * easeBack(q)) + ')'; pe.style.opacity = Math.min(1, q * 1.6); popped.push(pe); } }
+    if (s.reveal) { var re = B.querySelector(s.reveal); if (re) { re.style.opacity = Math.max(0, Math.min(1, (local - 520) / 300)); popped.push(re); } }
+    /* caption crossfades at screen changes; waits for the intro, gives way to the end card */
+    var key = s.id, op = 1;
+    if (moving) { if (p < .5) { key = prev.id; op = 1 - p * 2; } else op = p * 2 - 1; }
+    if (capEl.dataset.k !== key) { capEl.innerHTML = capHTML(T.captions[key]); capEl.dataset.k = key; }
+    var io = ms < 1100 ? 1 : Math.max(0, 1 - (ms - 1100) / 300), eo = s.end ? Math.min(1, local / 350) : 0;
+    capEl.style.opacity = op * Math.max(0, Math.min(1, (ms - 1400) / 300)) * (1 - eo);
+    /* the finger: fades in, taps, ripples out. Selectors are scoped to the screen */
+    tap.style.opacity = 0; if (pressed) { pressed.style.opacity = ''; pressed = null; }
+    if (s.tap) {
+      var el = B.querySelector(s.tap[0]), dt = local - s.tap[1];
+      if (el && dt > -260 && dt < 420) {
+        var r = el.getBoundingClientRect();
+        tap.style.left = (r.left + r.width / 2) + 'px'; tap.style.top = (r.top + r.height / 2) + 'px';
+        if (dt < 0) { tap.style.opacity = (dt + 260) / 260 * .9; tap.style.transform = 'scale(1)'; }
+        else { tap.style.opacity = .9 * (1 - dt / 420); tap.style.transform = 'scale(' + (1 + dt / 420 * .9) + ')'; }
+        if (dt >= 0 && dt < 160) { el.style.opacity = .72; pressed = el; }
+      }
+    }
+    $('tIntro').style.opacity = T.intro === false ? 0 : io;
+    $('tEnd').style.opacity = eo;
+    $('tProg').style.width = (ms / TOTAL * 100) + '%';
+    cur = s.id;
+    return i;
+  };
+  var tm = /[?&]t=(\d+)/.exec(Q); tourAt(tm ? +tm[1] : 0);
+}
+
+/* boot: #<screen-id> deep-links a screen (shoot.sh / hero-stills.sh use it); ?lang=xx picks the language */
+(function(){
+  var lm = /[?&]lang=(\w+)/.exec(Q); if (lm) setLang(lm[1]); else setLang(S.lang);
+  var h = location.hash.slice(1);
+  jump(scr[h] ? h : ORDER[0]);
+  if (scr[h] && !SHOT && !document.documentElement.classList.contains('appmode')) setTimeout(function(){ $('prototype').scrollIntoView(); }, 0);
+  if (/[?&]tour\b/.test(Q) && C.tour) tourInit();
+})();
+</script>
+</body>
+</html>
